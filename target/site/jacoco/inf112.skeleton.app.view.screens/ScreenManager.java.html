@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ScreenManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.view.screens</a> &gt; <span class="el_source">ScreenManager.java</span></div><h1>ScreenManager.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.view.screens;
+
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+
+import inf112.skeleton.app.event.GlobalEventBus;
+import inf112.skeleton.app.event.IEventBus;
+import inf112.skeleton.app.model.GameModel;
+import inf112.skeleton.app.model.audio.MusicEvent;
+
+
+/**
+ * This class is used to manage the different screens of the game.
+ * 
+ * 
+ */
+
+
+public class ScreenManager {
+    private static ScreenManager instance;
+    private Game game;
+    private GameModel model;
+
+<span class="fc" id="L27">    ScreenManager() {</span>
+<span class="fc" id="L28">    }</span>
+
+    /**
+     * This method is used to create a singleton instance of the ScreenManager class.
+     * @return
+     */
+
+    public static ScreenManager getInstance() {
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        if (instance == null) {</span>
+<span class="fc" id="L37">            instance = new ScreenManager();</span>
+        }
+<span class="fc" id="L39">        return instance;</span>
+    }
+
+    /**
+     * This method is used to initialize the ScreenManager with a game and a model.
+     * @param game
+     * @param model
+     */
+
+    public void initialize(Game game, GameModel model) {
+<span class="nc" id="L49">        this.game = game;</span>
+<span class="nc" id="L50">        this.model = model;</span>
+<span class="nc" id="L51">        showStartScreen();</span>
+<span class="nc" id="L52">    }</span>
+
+    /**
+     * This method is used to set the current screen of the game.
+     * @param screen
+     */
+
+    public void setScreen(Screen screen) {
+<span class="nc" id="L60">        game.setScreen(screen);</span>
+<span class="nc" id="L61">    }</span>
+
+    /**
+     * This method is used to show the start screen of the game.
+     */
+
+    public void showStartScreen() {
+<span class="nc" id="L68">        Screen currentScreen = game.getScreen();</span>
+
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        if (currentScreen != null) {</span>
+<span class="nc" id="L71">            currentScreen.dispose();</span>
+        }
+
+<span class="nc" id="L74">        Screen newScreen = new StartScreen();</span>
+<span class="nc" id="L75">        game.setScreen(newScreen);</span>
+<span class="nc" id="L76">        IEventBus bus = GlobalEventBus.getInstance(3);</span>
+<span class="nc" id="L77">        bus.trigger(&quot;PlayMusic&quot;, new MusicEvent(this, &quot;loading&quot;));</span>
+<span class="nc" id="L78">    }</span>
+
+    /**
+     * This method is used to show the game screen of the game.
+     */
+
+    public void showGameScreen() {
+<span class="nc" id="L85">        Screen currentScreen = game.getScreen();</span>
+
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (currentScreen != null) {</span>
+<span class="nc" id="L88">            currentScreen.dispose();</span>
+        }
+
+<span class="nc" id="L91">        Screen newScreen = new GameScreen(model);</span>
+<span class="nc" id="L92">        game.setScreen(newScreen);</span>
+<span class="nc" id="L93">        IEventBus bus = GlobalEventBus.getInstance(3);</span>
+<span class="nc" id="L94">        bus.trigger(&quot;PlayMusic&quot;, new MusicEvent(this, &quot;battle&quot;));</span>
+<span class="nc" id="L95">    }</span>
+
+    /**
+     * This method is used to show the game over screen of the game.
+     */
+
+    public void showGameOverScreen() {
+<span class="nc" id="L102">        Screen currentScreen = game.getScreen();</span>
+
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (currentScreen != null) {</span>
+<span class="nc" id="L105">            currentScreen.dispose();</span>
+        }
+
+<span class="nc" id="L108">        Screen newScreen = new GameOverScreen(model);</span>
+<span class="nc" id="L109">        game.setScreen(newScreen);</span>
+
+<span class="nc" id="L111">        IEventBus bus = GlobalEventBus.getInstance(3);</span>
+<span class="nc" id="L112">        bus.trigger(&quot;PlayMusic&quot;, new MusicEvent(this, &quot;loading&quot;));</span>
+<span class="nc" id="L113">    }</span>
+
+    /**
+     * This method is used to show the level up screen of the game.
+     *
+     * @return
+     */
+
+    public void showLevelUpScreen(int level) {
+<span class="nc" id="L122">        Screen currentScreen = game.getScreen();</span>
+
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        if (currentScreen != null) {</span>
+<span class="nc" id="L125">            currentScreen.dispose();</span>
+        }
+
+<span class="nc" id="L128">        Screen newScreen = new LevelUpScreen(level);</span>
+<span class="nc" id="L129">        game.setScreen(newScreen);</span>
+<span class="nc" id="L130">    }</span>
+
+    /**
+     * This method is used to get the current screen of the game.
+     * @return
+     */
+
+    public Screen getCurrentScreen() {
+<span class="nc" id="L138">        return game.getScreen();</span>
+    }
+
+    /**
+     * This method is used to dispose the current instance of the ScreenManager.
+     */
+
+    public void dispose() {
+<span class="nc" id="L146">        instance = null;</span>
+<span class="nc" id="L147">    }</span>
+
+    /**
+     * This method is used to create a transition effect between screens. 
+     * start at 1 and end at 0 to fade in, transparent to opaque, and start at 0 and end at 1 to fade out, opaque to transparent.
+     * @param current
+     * @param start
+     * @param end
+     * @param speed
+     * @param shapeRenderer
+     * @return
+     */
+
+    public static float transitionEffect1(float current, float start, float end, float speed, ShapeRenderer shapeRenderer) {
+<span class="pc bpc" id="L161" title="2 of 4 branches missed.">        if (current &lt; 1.1f &amp;&amp; current &gt; 0) {</span>
+            // Render the transition effect
+<span class="fc" id="L163">            Gdx.gl.glEnable(GL20.GL_BLEND);</span>
+<span class="fc" id="L164">            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);</span>
+<span class="fc" id="L165">            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);</span>
+<span class="fc" id="L166">            shapeRenderer.setColor(0f, 0f, 0f, current);</span>
+<span class="fc" id="L167">            shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());</span>
+<span class="fc" id="L168">            shapeRenderer.end();</span>
+<span class="fc" id="L169">            Gdx.gl.glDisable(GL20.GL_BLEND);</span>
+            // Update the transition alpha
+<span class="pc bpc" id="L171" title="1 of 4 branches missed.">            if (end &lt; 1.1f &amp;&amp; end &gt; 0.9f) {</span>
+<span class="fc" id="L172">                current = Math.min(0.999f, current + 0.01f * speed);</span>
+            } else {
+<span class="fc" id="L174">                current = Math.max(0f, current - 0.01f * speed);</span>
+            }
+        } 
+<span class="fc" id="L177">        return current;</span>
+    }
+
+    /**
+     * This method is used to create a pause menu. creates a gray transparent overlay
+     * and writes &quot;PAUSED&quot; in the middle of the screen.
+     *
+     * @param shapeRenderer
+     */
+
+    public static void pauseMenu(ShapeRenderer shapeRenderer) {
+<span class="nc" id="L188">        Gdx.gl.glEnable(GL20.GL_BLEND);</span>
+<span class="nc" id="L189">        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);</span>
+<span class="nc" id="L190">        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);</span>
+<span class="nc" id="L191">        shapeRenderer.setColor(0f, 0f, 0f, 0.5f);</span>
+<span class="nc" id="L192">        shapeRenderer.rect(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());</span>
+<span class="nc" id="L193">        shapeRenderer.end();</span>
+<span class="nc" id="L194">        Gdx.gl.glDisable(GL20.GL_BLEND);</span>
+<span class="nc" id="L195">        Gdx.gl.glEnable(GL20.GL_BLEND);</span>
+<span class="nc" id="L196">        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);</span>
+<span class="nc" id="L197">        Gdx.gl.glDisable(GL20.GL_BLEND);</span>
+<span class="nc" id="L198">    }</span>
+
+    public Game getGame() {
+<span class="nc" id="L201">        return game;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

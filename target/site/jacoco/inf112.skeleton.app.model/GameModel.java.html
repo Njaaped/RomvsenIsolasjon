@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameModel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model</a> &gt; <span class="el_source">GameModel.java</span></div><h1>GameModel.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model;
+
+import inf112.skeleton.app.event.GlobalEventBus;
+import inf112.skeleton.app.event.IEventBus;
+import inf112.skeleton.app.model.audio.MusicHandler;
+import inf112.skeleton.app.model.entity.powerup.ILootDropper;
+import inf112.skeleton.app.model.entity.powerup.LootDropper;
+import inf112.skeleton.app.model.mapfactories.DefaultTileBodyCreator;
+import inf112.skeleton.app.model.mapfactories.Map;
+
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.utils.Array;
+import inf112.skeleton.app.controller.ControllableModel;
+import inf112.skeleton.app.model.entity.alien.AlienBomber;
+import inf112.skeleton.app.model.entity.alien.AlienOne;
+import inf112.skeleton.app.model.entity.alien.AlienTwo;
+import inf112.skeleton.app.model.entity.player.Player;
+import inf112.skeleton.app.model.entity.DeferredEntityFactory;
+import inf112.skeleton.app.model.entity.Entity;
+import inf112.skeleton.app.model.mapfactories.MapFactory;
+import inf112.skeleton.app.model.mapfactories.Tile;
+import inf112.skeleton.app.model.mapfactories.TileType;
+import inf112.skeleton.app.model.entity.powerup.*;
+
+
+import inf112.skeleton.app.model.audio.SoundEffectHandler;
+import inf112.skeleton.app.model.box2d.Box2DWorldStatic;
+import inf112.skeleton.app.model.gamestate.GameState;
+import inf112.skeleton.app.model.gamestate.LevelManager;
+import inf112.skeleton.app.model.score.ScoreEvent;
+import inf112.skeleton.app.model.score.ScoreManager;
+import inf112.skeleton.app.view.Media;
+import inf112.skeleton.app.view.ViewableModel;
+import inf112.skeleton.app.view.screens.ScreenManager;
+
+import java.util.Random;
+
+public class GameModel implements ControllableModel, ViewableModel {
+    MapFactory mapFactory;
+    Map map;
+    Player player;
+    LevelManager levelManager;
+    private boolean debugging;
+    private Random rand;
+    private ILootDropper lootDropper;
+
+    public static GameState state;
+    public ScoreManager scoreManager;
+    public SoundEffectHandler soundEffectHandler;
+    public MusicHandler musicHandler;
+
+<span class="fc" id="L54">    public GameModel(MapFactory mapFactory){</span>
+<span class="fc" id="L55">        Media.load_assets();</span>
+<span class="fc" id="L56">        Box2DWorldStatic.startBox2DWorld();</span>
+<span class="fc" id="L57">        levelManager = new LevelManager();</span>
+<span class="fc" id="L58">        this.mapFactory = mapFactory;</span>
+<span class="fc" id="L59">        this.rand = new Random(mapFactory.getSeed());</span>
+<span class="fc" id="L60">        this.map = mapFactory.generate(levelManager.getMapWidth(), levelManager.getMapHeight(), levelManager.getDifficulty());</span>
+<span class="fc" id="L61">        Box2DWorldStatic.loadMap(map, new DefaultTileBodyCreator());</span>
+<span class="fc" id="L62">        initializePlayerAndAlien();</span>
+<span class="fc" id="L63">        GameModel.state = GameState.MAIN_MENU;</span>
+<span class="fc" id="L64">        this.scoreManager = new ScoreManager();</span>
+<span class="fc" id="L65">        this.soundEffectHandler = new SoundEffectHandler();</span>
+<span class="fc" id="L66">        this.lootDropper = new LootDropper();</span>
+<span class="fc" id="L67">        this.musicHandler = new MusicHandler();</span>
+<span class="fc" id="L68">    }</span>
+
+    private void initializePlayerAndAlien() {
+<span class="fc" id="L71">        int[] playerPos = map.getSpawnPoint();</span>
+<span class="fc" id="L72">        this.player = new Player(new Vector2(playerPos[1], playerPos[0]));</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        for (int row = 0; row &lt; map.getHeight(); row++) {</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            for (int col = 0; col &lt; map.getWidth(); col++) {</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">                if (map.getTile(row, col).getTiletype() == TileType.ENEMY_SPAWN) {</span>
+<span class="fc" id="L76">                    int random = rand.nextInt(3);</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">                    if (random == 0) {</span>
+<span class="fc" id="L78">                        AlienOne alien = new AlienOne(new Vector2(col, row));</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">                    } else if (random == 2) {</span>
+<span class="fc" id="L80">                        AlienTwo alien = new AlienTwo(new Vector2(col, row));</span>
+<span class="fc" id="L81">                    } else {</span>
+<span class="fc" id="L82">                        AlienBomber alien = new AlienBomber(new Vector2(col, row), 49);</span>
+                    }
+                }
+<span class="fc bfc" id="L85" title="All 2 branches covered.">                if (map.getTile(row, col).getTiletype() == TileType.POWERUP_SPAWN) {</span>
+<span class="fc" id="L86">                    int random = rand.nextInt(3);</span>
+<span class="pc bpc" id="L87" title="1 of 4 branches missed.">                    switch (random) {</span>
+                        case 0:
+<span class="fc" id="L89">                            DeferredEntityFactory.getInstance().createEntity(&quot;Star&quot;, new Vector2(col, row));</span>
+<span class="fc" id="L90">                            break;</span>
+                        case 1:
+<span class="fc" id="L92">                            DeferredEntityFactory.getInstance().createEntity(&quot;HealthPacket&quot;, new Vector2(col, row));</span>
+<span class="fc" id="L93">                            break;</span>
+                        case 2:
+<span class="fc" id="L95">                            DeferredEntityFactory.getInstance().createEntity(&quot;RayGunPickup&quot;, new Vector2(col, row));</span>
+<span class="fc" id="L96">                            break;</span>
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+<span class="fc" id="L103">    }</span>
+
+    /**
+     * Level up the game
+     */
+    
+     private void levelup() {
+<span class="nc" id="L110">        levelManager.nextLevel();</span>
+<span class="nc" id="L111">        ScreenManager.getInstance().showLevelUpScreen(levelManager.getCurrentLevel());</span>
+<span class="nc" id="L112">        Box2DWorldStatic.startBox2DWorld();</span>
+<span class="nc" id="L113">        this.map = mapFactory.generate(levelManager.getMapWidth(), levelManager.getMapHeight(), levelManager.getDifficulty());</span>
+<span class="nc" id="L114">        Box2DWorldStatic.loadMap(map, new DefaultTileBodyCreator());</span>
+<span class="nc" id="L115">        initializePlayerAndAlien();</span>
+<span class="nc" id="L116">        GameModel.state = GameState.PAUSED;</span>
+<span class="nc" id="L117">        IEventBus bus = GlobalEventBus.getInstance(1);</span>
+<span class="nc" id="L118">        bus.trigger(&quot;LevelCompleted&quot;, new ScoreEvent(this, 100));</span>
+<span class="nc" id="L119">    }</span>
+
+    /**
+     * !!!!!!! Underlying methods are for ViewableModel !!!!!!!
+     * |
+     * |
+     * |
+     * |
+     * V
+     */
+
+    @Override
+    public Array&lt;Entity&gt; getEntities() {
+        /*ArrayList&lt;Entity&gt; a = new ArrayList&lt;&gt;();
+        a.add(player);
+        return a;*/
+<span class="fc" id="L135">        Array&lt;Body&gt; bodies = new Array&lt;&gt;();</span>
+<span class="fc" id="L136">        Box2DWorldStatic.world.getBodies(bodies);</span>
+<span class="fc" id="L137">        Array&lt;Entity&gt; entities = new Array&lt;&gt;();</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        for (Body b : bodies) {</span>
+<span class="fc bfc" id="L139" title="All 2 branches covered.">            if (b.getUserData() instanceof Entity e) {</span>
+<span class="fc" id="L140">                entities.add(e);</span>
+            }
+        }
+<span class="fc" id="L143">        return entities;</span>
+    }
+
+
+
+    @Override
+    public Array&lt;Array&lt;Tile&gt;&gt; getTiles() {
+<span class="fc" id="L150">        return map.getTiles();</span>
+    }
+
+    @Override
+    public Map getMap() {
+<span class="fc" id="L155">        return map;</span>
+
+    }
+
+    @Override
+    public Vector2 getPlayerPosition() {
+<span class="fc" id="L161">        return player.getPosition();</span>
+    }
+
+    @Override
+    public float getPlayerHealthPercentage(){
+<span class="fc" id="L166">        return this.player.getHealthPercentage();</span>
+    }
+
+    @Override
+    public void drawHitboxes(OrthographicCamera camera) {
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (debugging) {</span>
+<span class="nc" id="L172">            Box2DWorldStatic.drawHitboxes(camera);</span>
+        }
+<span class="nc" id="L174">    }</span>
+
+    /**
+     * !!!!!!! Underlying methods are for Controllable model !!!!!!!
+     * |
+     * |
+     * |
+     * |
+     * V
+     */
+
+    @Override
+    public void moveDirection(int x, int y) {
+
+<span class="fc" id="L188">        Vector2 direction = new Vector2(x, y);</span>
+        // Update the player's movement direction based on the current input states.
+<span class="fc" id="L190">        player.setMovementDirection(direction);</span>
+<span class="fc" id="L191">    }</span>
+
+    @Override
+    public void attackDirection(int x, int y) {
+<span class="nc" id="L195">        Vector2 attackVector = new Vector2(x, y);</span>
+<span class="nc bnc" id="L196" title="All 2 branches missed.">        player.setAttacking(!attackVector.equals(Vector2.Zero), attackVector);</span>
+
+<span class="nc" id="L198">    }</span>
+
+    
+    @Override
+    public void isSprinting(boolean sprinting) {
+<span class="fc" id="L203">        player.setSprintState(sprinting);</span>
+<span class="fc" id="L204">    }</span>
+
+
+    @Override
+    public void update(float deltaTime) {
+<span class="pc bpc" id="L209" title="1 of 2 branches missed.">        if (GameModel.state == GameState.RUNNING) {</span>
+<span class="fc" id="L210">            Box2DWorldStatic.stepWorld(deltaTime);</span>
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">            if (LevelManager.isLevelUp(player, map, map.getSpawnPoint()[1], map.getSpawnPoint()[0])) {</span>
+<span class="nc" id="L212">                levelup();</span>
+            }
+<span class="pc bpc" id="L214" title="1 of 2 branches missed.">            if(player.getHealthPercentage() &lt;= 0){</span>
+<span class="nc" id="L215">                gameOver();</span>
+            }
+        }
+<span class="fc" id="L218">    }</span>
+
+    @Override
+    public void toggleDebug() {
+<span class="nc bnc" id="L222" title="All 2 branches missed.">        debugging = !debugging;</span>
+<span class="nc" id="L223">    }</span>
+
+    @Override
+    public void setAttacking(boolean b) {
+<span class="nc" id="L227">    }</span>
+
+    @Override
+    public void pauseGame() {
+<span class="fc bfc" id="L231" title="All 2 branches covered.">        if (GameModel.state == GameState.RUNNING) {</span>
+<span class="fc" id="L232">            GameModel.state = GameState.PAUSED;</span>
+<span class="fc" id="L233">        } else {</span>
+<span class="fc" id="L234">            GameModel.state = GameState.RUNNING;</span>
+        }
+<span class="fc" id="L236">    }</span>
+
+    @Override
+    public void gameOver() {
+<span class="fc" id="L240">        GameModel.state = GameState.GAME_OVER;</span>
+<span class="fc" id="L241">    }</span>
+
+    @Override
+    public void restartGame() {
+<span class="fc" id="L245">        Box2DWorldStatic.startBox2DWorld();</span>
+<span class="fc" id="L246">        this.levelManager = new LevelManager();</span>
+<span class="fc" id="L247">        mapFactory.setSeed(new Random().nextInt());</span>
+<span class="fc" id="L248">        this.map = mapFactory.generate(levelManager.getMapWidth(), levelManager.getMapHeight(), levelManager.getDifficulty());</span>
+<span class="fc" id="L249">        Box2DWorldStatic.loadMap(map, new DefaultTileBodyCreator());</span>
+<span class="fc" id="L250">        initializePlayerAndAlien();</span>
+<span class="fc" id="L251">        GameModel.state = GameState.RUNNING;</span>
+<span class="fc" id="L252">        scoreManager.resetScore();</span>
+<span class="fc" id="L253">    }</span>
+
+    @Override
+    public void stopGame() {
+<span class="fc" id="L257">        restartGame();</span>
+<span class="fc" id="L258">        GameModel.state = GameState.MAIN_MENU;</span>
+<span class="fc" id="L259">        System.out.println(&quot;Game stopped&quot;);</span>
+<span class="fc" id="L260">    }</span>
+
+    @Override
+    public int getScore() {
+<span class="fc" id="L264">        return scoreManager.getScore();</span>
+    }
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

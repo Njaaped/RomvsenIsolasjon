@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PowerUpManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gdx-app</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model.entity.player.attributes</a> &gt; <span class="el_source">PowerUpManager.java</span></div><h1>PowerUpManager.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model.entity.player.attributes;
+
+import com.badlogic.gdx.graphics.Texture;
+
+import inf112.skeleton.app.view.Media;
+
+public class PowerUpManager {
+    private boolean godMode;
+    private boolean rayGun;
+    private int godModeTimer;
+    private int rayGunTimer;
+    private final int godModeDuration;
+    private final int rayGunDuration;
+    private Texture godModeTexture;
+
+<span class="fc" id="L16">    public PowerUpManager(int godModeDuration, int rayGunDuration) {</span>
+<span class="fc" id="L17">        this.godModeDuration = godModeDuration;</span>
+<span class="fc" id="L18">        this.rayGunDuration = rayGunDuration;</span>
+<span class="fc" id="L19">        this.godMode = false;</span>
+<span class="fc" id="L20">        this.rayGun = false;</span>
+<span class="fc" id="L21">        this.godModeTexture = Media.player;</span>
+<span class="fc" id="L22">    }</span>
+
+    /**
+     * Activates god mode for the player
+     */
+
+    public void activateGodMode() {
+<span class="fc" id="L29">        godMode = true;</span>
+<span class="fc" id="L30">        godModeTimer = godModeDuration;</span>
+<span class="fc" id="L31">    }</span>
+
+    /**
+     * Deactivates god mode for the player
+     */
+
+    public void deactivateGodMode() {
+<span class="nc" id="L38">        godMode = false;</span>
+<span class="nc" id="L39">    }</span>
+
+    /**
+     * Returns whether god mode is active or not
+     * @return
+     */
+
+    public boolean isGodModeActive() {
+<span class="fc" id="L47">        return godMode;</span>
+    }
+
+    /**
+     * Activates the ray gun for the player
+     */
+
+    public void activateRayGun() {
+<span class="fc" id="L55">        rayGun = true;</span>
+<span class="fc" id="L56">        rayGunTimer = rayGunDuration;</span>
+<span class="fc" id="L57">    }</span>
+
+    /**
+     *  Deactivates the ray gun for the player
+     */
+
+    public void deactivateRayGun() {
+<span class="nc" id="L64">        rayGun = false;</span>
+<span class="nc" id="L65">    }</span>
+
+    /**
+     * Returns whether the ray gun is active or not
+     * @return
+     */
+
+    public boolean isRayGunActive() {
+<span class="fc" id="L73">        return rayGun;</span>
+    }
+
+    /**
+     * Returns the texture of the player when god mode is active
+     * @return
+     */
+
+    public Texture getGodModeTexture() {
+<span class="fc" id="L82">        return godModeTexture;</span>
+    }
+    
+    /**
+     * Updates the power up manager
+     * @param deltaTime
+     */
+
+    public void update(float deltaTime) {
+<span class="pc bpc" id="L91" title="1 of 4 branches missed.">        if (godMode &amp;&amp; godModeTimer &gt; 0) {</span>
+<span class="fc" id="L92">            godModeTimer--;</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">            if (godModeTimer &lt;= 0) {</span>
+<span class="nc" id="L94">                deactivateGodMode();</span>
+<span class="nc" id="L95">                this.godModeTexture = Media.player;</span>
+<span class="nc" id="L96">                return;</span>
+            }
+<span class="fc" id="L98">            this.godModeTexture = Media.getGodModeColors()[godModeTimer % Media.getGodModeColors().length];</span>
+        }
+
+<span class="pc bpc" id="L101" title="1 of 4 branches missed.">        if (rayGun &amp;&amp; rayGunTimer &gt; 0) {</span>
+<span class="fc" id="L102">            rayGunTimer--;</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">            if (rayGunTimer &lt;= 0) {</span>
+<span class="nc" id="L104">                deactivateRayGun();</span>
+            }
+        }
+<span class="fc" id="L107">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

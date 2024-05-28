@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StartScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.view.screens</a> &gt; <span class="el_source">StartScreen.java</span></div><h1>StartScreen.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.view.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import inf112.skeleton.app.controller.AppController;
+import inf112.skeleton.app.view.Media;
+import inf112.skeleton.app.view.ui.buttons.GameButton;
+
+
+/**
+ * Represents the start screen of the game, providing options to start the game or exit.
+ * This screen includes interactive buttons and handles transitions to other screens.
+ */
+public class StartScreen implements Screen {
+    private final GameButton startButton;
+    private final GameButton exitButton;
+    private final Texture startButtonOff;
+    private final Texture startButtonOn;
+    private final Texture exitButtonOff;
+    private final Texture exitButtonOn;
+    private SpriteBatch batch;
+    private Texture background;
+    private OrthographicCamera camera;
+    private float transitionAlpha;
+    private ShapeRenderer shapeRenderer;
+
+    private AppController appController;
+
+    public StartScreen() {
+<span class="nc" id="L37">        this(new SpriteBatch(), new ShapeRenderer(), new OrthographicCamera(), ScreenManager.getInstance(), new AppController());</span>
+<span class="nc" id="L38">    }</span>
+
+    /**
+     * Constructs the start screen with all necessary UI components and initializes the screen layout.
+     */
+<span class="fc" id="L43">    public StartScreen(SpriteBatch batch, ShapeRenderer shapeRenderer, OrthographicCamera camera, ScreenManager screenManager, AppController appController) {</span>
+<span class="fc" id="L44">        this.batch = batch;</span>
+<span class="fc" id="L45">        background = Media.getTexture(&quot;startBackground&quot;);</span>
+<span class="fc" id="L46">        this.shapeRenderer = shapeRenderer;</span>
+<span class="fc" id="L47">        this.camera = camera;</span>
+<span class="fc" id="L48">        this.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());</span>
+<span class="fc" id="L49">        transitionAlpha = 0.0f;</span>
+<span class="fc" id="L50">        this.appController = appController;</span>
+
+<span class="fc" id="L52">        startButtonOff = Media.getTexture(&quot;buttonOffStart&quot;);</span>
+<span class="fc" id="L53">        startButtonOn = Media.getTexture(&quot;buttonOnStart&quot;);</span>
+<span class="fc" id="L54">        exitButtonOff = Media.getTexture(&quot;buttonOffExit&quot;);</span>
+<span class="fc" id="L55">        exitButtonOn = Media.getTexture(&quot;buttonOnExit&quot;);</span>
+
+<span class="fc" id="L57">        int buttonWidth = Gdx.graphics.getWidth() / 5;</span>
+<span class="fc" id="L58">        int buttonHeight = Gdx.graphics.getHeight() / 10;</span>
+<span class="fc" id="L59">        int buttonX = Gdx.graphics.getWidth() / 2 - buttonWidth / 2;</span>
+<span class="fc" id="L60">        int startButtonY = Gdx.graphics.getHeight() / 2 - buttonHeight / 2;</span>
+<span class="fc" id="L61">        int exitButtonY = Gdx.graphics.getHeight() / 2 - buttonHeight / 2 - buttonHeight - 10;</span>
+
+<span class="fc" id="L63">        startButton = new GameButton(startButtonOff, startButtonOn, new Rectangle(buttonX, startButtonY, buttonWidth, buttonHeight));</span>
+<span class="fc" id="L64">        exitButton = new GameButton(exitButtonOff, exitButtonOn, new Rectangle(buttonX, exitButtonY, buttonWidth, buttonHeight));</span>
+<span class="fc" id="L65">    }</span>
+
+    @Override
+    public void show() {
+<span class="fc" id="L69">    }</span>
+
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L73">        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+<span class="nc" id="L74">        batch.setProjectionMatrix(camera.combined);</span>
+<span class="nc" id="L75">        batch.begin();</span>
+
+<span class="nc" id="L77">        batch.draw(background, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());</span>
+
+<span class="nc" id="L79">        startButton.update(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());</span>
+<span class="nc" id="L80">        startButton.draw(batch);</span>
+<span class="nc" id="L81">        exitButton.update(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY());</span>
+<span class="nc" id="L82">        exitButton.draw(batch);</span>
+
+<span class="nc" id="L84">        handleMouseClick();</span>
+
+<span class="nc" id="L86">        batch.end();</span>
+
+<span class="nc" id="L88">        transition();</span>
+<span class="nc" id="L89">        changeIfDarkEnough();</span>
+<span class="nc" id="L90">    }</span>
+
+    void handleMouseClick() {
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if (Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)) {</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">            if (startButton.getBounds().contains(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY())) {</span>
+<span class="fc" id="L95">                transitionAlpha = 0.001f;</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">            } else if (exitButton.getBounds().contains(Gdx.input.getX(), Gdx.graphics.getHeight() - Gdx.input.getY())) {</span>
+<span class="fc" id="L97">                appController.exit();</span>
+            }
+        }
+<span class="fc" id="L100">    }</span>
+
+    private void transition() {
+<span class="nc" id="L103">        transitionAlpha = ScreenManager.transitionEffect1(transitionAlpha, 0f, 1f, 5f, shapeRenderer);</span>
+<span class="nc" id="L104">    }</span>
+
+    private void changeIfDarkEnough() {
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (transitionAlpha &gt; 0.95f) {</span>
+<span class="nc" id="L108">            ScreenManager.getInstance().showGameScreen();</span>
+        }
+<span class="nc" id="L110">    }</span>
+
+
+    @Override
+    public void resize(int width, int height) {
+<span class="fc" id="L115">        camera.setToOrtho(false, width, height);</span>
+<span class="fc" id="L116">        int buttonWidth = Gdx.graphics.getWidth() / 4;</span>
+<span class="fc" id="L117">        int buttonHeight = Gdx.graphics.getHeight() / 6;</span>
+<span class="fc" id="L118">        int buttonX = Gdx.graphics.getWidth() / 2 - buttonWidth / 2;</span>
+<span class="fc" id="L119">        int startButtonY = 3 * Gdx.graphics.getHeight() / 7 - buttonHeight / 2;</span>
+<span class="fc" id="L120">        int exitButtonY = 3 * Gdx.graphics.getHeight() / 7 - buttonHeight / 2 - buttonHeight - 25;</span>
+
+<span class="fc" id="L122">        startButton.setBounds(new Rectangle(buttonX, startButtonY, buttonWidth, buttonHeight));</span>
+<span class="fc" id="L123">        exitButton.setBounds(new Rectangle(buttonX, exitButtonY, buttonWidth, buttonHeight));</span>
+<span class="fc" id="L124">    }</span>
+
+    @Override
+    public void pause() {
+<span class="fc" id="L128">    }</span>
+
+    @Override
+    public void resume() {
+<span class="fc" id="L132">    }</span>
+
+    @Override
+    public void hide() {
+<span class="fc" id="L136">    }</span>
+
+    @Override
+    public void dispose() {
+<span class="fc" id="L140">        batch.dispose();</span>
+<span class="fc" id="L141">        background.dispose();</span>
+<span class="fc" id="L142">        shapeRenderer.dispose();</span>
+<span class="fc" id="L143">        startButton.dispose();</span>
+<span class="fc" id="L144">        exitButton.dispose();</span>
+<span class="fc" id="L145">        startButtonOff.dispose();</span>
+<span class="fc" id="L146">        startButtonOn.dispose();</span>
+<span class="fc" id="L147">        exitButtonOff.dispose();</span>
+<span class="fc" id="L148">        exitButtonOn.dispose();</span>
+<span class="fc" id="L149">    }</span>
+
+    /**
+     * Retrieves the current transition alpha value for the screen.
+     *
+     * @return the current transition alpha value
+     */
+    public float getTransitionAlpha() {
+<span class="fc" id="L157">        return transitionAlpha;</span>
+    }
+
+    /**
+     * Sets the transition alpha value for the screen.
+     *
+     * @param transitionAlpha the new transition alpha value
+     */
+    public void setTransitionAlpha(float transitionAlpha) {
+<span class="fc" id="L166">        this.transitionAlpha = transitionAlpha;</span>
+<span class="fc" id="L167">    }</span>
+
+    /**
+     * Retrieves the SpriteBatch used for rendering the screen.
+     *
+     * @return the SpriteBatch used for rendering
+     */
+    public SpriteBatch getBatch() {
+<span class="fc" id="L175">        return batch;</span>
+    }
+
+    /**
+     * Sets the SpriteBatch used for rendering the screen.
+     *
+     * @param batch the new SpriteBatch to use for rendering
+     */
+    public void setBatch(SpriteBatch batch) {
+<span class="fc" id="L184">        this.batch = batch;</span>
+<span class="fc" id="L185">    }</span>
+
+    /**
+     * Retrieves the OrthographicCamera used for rendering the screen.
+     *
+     * @return the OrthographicCamera used for rendering
+     */
+    public OrthographicCamera getCamera() {
+<span class="fc" id="L193">        return camera;</span>
+    }
+
+    /**
+     * Sets the OrthographicCamera used for rendering the screen.
+     *
+     * @param camera the new OrthographicCamera to use for rendering
+     */
+    public void setCamera(OrthographicCamera camera) {
+<span class="fc" id="L202">        this.camera = camera;</span>
+<span class="fc" id="L203">    }</span>
+
+    /**
+     * Retrieves the ShapeRenderer used for rendering shapes on the screen.
+     *
+     * @return the ShapeRenderer used for rendering shapes
+     */
+    public ShapeRenderer getShapeRenderer() {
+<span class="fc" id="L211">        return shapeRenderer;</span>
+    }
+
+    /**
+     * Sets the ShapeRenderer used for rendering shapes on the screen.
+     *
+     * @param shapeRenderer the new ShapeRenderer to use for rendering shapes
+     */
+    public void setShapeRenderer(ShapeRenderer shapeRenderer) {
+<span class="fc" id="L220">        this.shapeRenderer = shapeRenderer;</span>
+<span class="fc" id="L221">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Map.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model.mapfactories</a> &gt; <span class="el_source">Map.java</span></div><h1>Map.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model.mapfactories;
+
+import java.util.Iterator;
+
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import inf112.skeleton.app.model.mapfactories.maputils.AStar;
+import inf112.skeleton.app.view.Media;
+
+// import list
+import java.util.List;
+
+public class Map implements Iterable&lt;MapEntry&gt; {
+    // The map of the game
+    private final Array&lt;Array&lt;Tile&gt;&gt; tiles;
+<span class="fc" id="L16">    private final int TILE_SIZE = 1;</span>
+    private final int[][] intMap;
+
+<span class="fc" id="L19">    public Map(Array&lt;Array&lt;Tile&gt;&gt; tiles) {</span>
+<span class="fc" id="L20">        this.tiles = tiles;</span>
+<span class="fc" id="L21">        intMap = getGrid(tiles);</span>
+<span class="fc" id="L22">    }</span>
+
+    /**
+     * Get the width of the map.
+     * @return width
+     */
+
+    public int getWidth() {
+<span class="fc" id="L30">        return tiles.get(0).size;</span>
+    }
+
+    /**
+     * Get the height of the map.
+     * @return height
+     */
+
+    public int getHeight() {
+<span class="fc" id="L39">        return tiles.size;</span>
+    }
+
+    public int getTileSize() {
+<span class="fc" id="L43">        return TILE_SIZE;</span>
+    }
+
+    /**
+     * Get a tile on the map.
+     * !IMPORTANT Tile is currently mutable, be careful with modifying it.
+     * @param row The row of the tile to get
+     * @param col The col of the tile to get
+     * @return The tile in the grid.
+     */
+    public Tile getTile(int row, int col) {
+<span class="fc" id="L54">        return tiles.get(row).get(col);</span>
+    }
+
+    /**
+     * Get the tiles of the map. as a 2D array.
+     * @return Array of array of tiles
+     */
+
+    public Array&lt;Array&lt;Tile&gt;&gt; getTiles() {
+<span class="fc" id="L63">        return tiles;</span>
+    }
+
+    public Vector2 convertToWorldPosition(int row, int col) {
+<span class="fc" id="L67">        return new Vector2(col * TILE_SIZE, row * TILE_SIZE);</span>
+    }
+
+    @Override
+    public Iterator&lt;MapEntry&gt; iterator() {
+<span class="fc" id="L72">        Array&lt;MapEntry&gt; entries = new Array&lt;&gt;();</span>
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        for (int row = 0; row &lt; tiles.size; row++) {</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            for (int col = 0; col &lt; tiles.get(row).size; col++) {</span>
+<span class="fc" id="L75">                entries.add(new MapEntry(row, col, getTile(row, col).getTiletype()));</span>
+            }
+        }
+
+<span class="fc" id="L79">        return entries.iterator();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L84">        StringBuilder printMap = new StringBuilder();</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        for (int row = 0; row &lt; tiles.size; row++) {</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">            for (int col = 0; col &lt; tiles.get(0).size; col++) {</span>
+<span class="nc" id="L87">                printMap.append(getTile(row, col).getTiletype()).append(&quot; &quot;);</span>
+            }
+
+<span class="nc" id="L90">            printMap.append(&quot;\n&quot;);</span>
+        }
+
+<span class="nc" id="L93">        return printMap.toString();</span>
+    }
+
+    /**
+     * Get the position of the player spawn point.
+     */
+
+    public int[] getSpawnPoint() {
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">        for (int row = 0; row &lt; getHeight(); row++) {</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">            for (int col = 0; col &lt; getWidth(); col++) {</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">                if (getTile(row, col).getTiletype() == TileType.PLAYER_SPAWN) {</span>
+<span class="fc" id="L104">                    return new int[]{row, col};</span>
+                }
+            }
+        }
+<span class="nc" id="L108">        return new int[]{0, 0};</span>
+    }
+
+    /**
+     * Get the Integer version of the map.
+     */
+
+    public int[][] getIntMap() {
+<span class="fc" id="L116">        return intMap;</span>
+    }
+
+    /**
+     * Draws path from player to spawn point
+     */
+
+    public void drawPath(Vector2 playerPos) {
+<span class="fc" id="L124">        int[] spawn = getSpawnPoint();</span>
+<span class="fc" id="L125">        int[][] grid = getGrid(tiles);</span>
+<span class="fc" id="L126">        List&lt;AStar.Node&gt; path = AStar.algorithm(grid, spawn[0], spawn[1],(int) playerPos.y, (int) playerPos.x);</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">        for (AStar.Node node : path) {</span>
+<span class="nc" id="L128">            tiles.get(node.getRow()).get(node.getCol()).setPrimaryTexture(Media.brightGreen);</span>
+<span class="nc" id="L129">            tiles.get(node.getRow()).get(node.getCol()).setSecondaryTexture(Media.brightGreen);</span>
+        }
+<span class="fc" id="L131">    }</span>
+
+     /**
+     * Helper method to generate the intmap from the tileGrid
+     * @param tileGrid grid of tiles
+     * @return integer map
+     */
+
+     private int[][] getGrid(Array&lt;Array&lt;Tile&gt;&gt; tileGrid) {
+<span class="fc" id="L140">        int[][] grid = new int[tileGrid.size][tileGrid.get(0).size];</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        for (int row = 0; row &lt; tileGrid.size; row++) {</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            for (int col = 0; col &lt; tileGrid.get(0).size; col++) {</span>
+<span class="fc" id="L143">                Tile tile = tileGrid.get(row).get(col);</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                if (tile.getTiletype() == TileType.WALL) {</span>
+<span class="fc" id="L145">                    grid[row][col] = 2;</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">                } else if (tile.getTiletype() == TileType.FLOOR) {</span>
+<span class="fc" id="L147">                    grid[row][col] = 1;</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">                } else if (tile.getTiletype() == TileType.POWERUP_SPAWN) {</span>
+<span class="fc" id="L149">                    grid[row][col] = 1;</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">                } else if (tile.getTiletype() == TileType.PLAYER_SPAWN) {</span>
+<span class="fc" id="L151">                    grid[row][col] = 1;</span>
+<span class="fc bfc" id="L152" title="All 2 branches covered.">                } else if (tile.getTiletype() == TileType.ENEMY_SPAWN) {</span>
+<span class="fc" id="L153">                    grid[row][col] = 1;</span>
+<span class="fc" id="L154">                } else {</span>
+<span class="fc" id="L155">                    grid[row][col] = 0;</span>
+                }
+            }
+        }
+<span class="fc" id="L159">        return grid;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

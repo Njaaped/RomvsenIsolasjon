@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Box2DWorldStatic.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gdx-app</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model.box2d</a> &gt; <span class="el_source">Box2DWorldStatic.java</span></div><h1>Box2DWorldStatic.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model.box2d;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
+import inf112.skeleton.app.model.Entity.Entity;
+import inf112.skeleton.app.model.Entity.Interactable;
+import inf112.skeleton.app.model.Entity.Player;
+import inf112.skeleton.app.model.Entity.weapon.Bullet;
+
+import java.util.concurrent.ConcurrentHashMap;
+
+import inf112.skeleton.app.model.MapFactories.ITileBodyCreator;
+import inf112.skeleton.app.model.MapFactories.Map;
+import inf112.skeleton.app.model.MapFactories.MapEntry;
+import inf112.skeleton.app.model.MapFactories.Tile;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+
+<span class="nc" id="L25">public class Box2DWorldStatic {</span>
+  public static World world;
+  public static ConcurrentHashMap&lt;Integer, Entity&gt; entityMap;
+  public static HashSet&lt;Body&gt; tileBodies;
+  static HashSet&lt;Body&gt; bodiesToBeRemoved;
+  static Box2DDebugRenderer debugRenderer;
+  public static int entityId;
+  public static int playerID;
+  public static int[][] intmap;
+
+
+  /**
+   * Constructor for creating a new Box2DWorld instance.
+   * Initializes the physics world with no gravity and sets a contact listener to handle collisions.
+   */
+  public static void startBox2DWorld() {
+<span class="fc" id="L41">    world = new World(new Vector2(0, 0), true);</span>
+<span class="fc" id="L42">    bodiesToBeRemoved = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L43">    entityMap = new ConcurrentHashMap&lt;&gt;();</span>
+<span class="fc" id="L44">    tileBodies = new HashSet&lt;&gt;();</span>
+<span class="fc" id="L45">    entityId = 1;</span>
+<span class="fc" id="L46">    playerID = 0;</span>
+<span class="fc" id="L47">    world.setContactListener(new ContactListener() {</span>
+      @Override
+      public void beginContact(Contact contact) {
+<span class="nc" id="L50">        Fixture A = contact.getFixtureA();</span>
+<span class="nc" id="L51">        Fixture B = contact.getFixtureB();</span>
+<span class="nc" id="L52">        handleCollisions(A, B, true);</span>
+<span class="nc" id="L53">      }</span>
+
+      @Override
+      public void endContact(Contact contact) {
+<span class="nc" id="L57">        Fixture A = contact.getFixtureA();</span>
+<span class="nc" id="L58">        Fixture B = contact.getFixtureB();</span>
+<span class="nc" id="L59">        handleCollisions(A, B, false);</span>
+<span class="nc" id="L60">      }</span>
+
+      @Override
+      public void preSolve(Contact contact, Manifold manifold) {
+
+<span class="nc" id="L65">      }</span>
+
+      @Override
+      public void postSolve(Contact contact, ContactImpulse contactImpulse) {
+
+<span class="nc" id="L70">      }</span>
+    });
+<span class="fc" id="L72">  }</span>
+
+  /**
+   * Advances the physics simulation of the world by a time step.
+   * Also clears the forces in the world after stepping.
+   */
+  public static void stepWorld(){
+<span class="nc" id="L79">    Collection&lt;Integer&gt; entityKeys = entityMap.keySet();</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">    for (int entityKey: entityKeys) {</span>
+<span class="nc" id="L81">      Entity entity = entityMap.get(entityKey);</span>
+<span class="nc" id="L82">      entity.update((long) (Gdx.app.getGraphics().getDeltaTime() * 1000));</span>
+<span class="nc" id="L83">    }</span>
+<span class="nc" id="L84">    world.step(Gdx.app.getGraphics().getDeltaTime(), 6, 2);</span>
+<span class="nc" id="L85">    world.clearForces();</span>
+<span class="nc" id="L86">    destroyBodies();</span>
+<span class="nc" id="L87">  }</span>
+
+  private static void destroyBodies() {
+<span class="nc bnc" id="L90" title="All 2 branches missed.">    if (!bodiesToBeRemoved.isEmpty()) {</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">      for (Body b : bodiesToBeRemoved) {</span>
+        //System.out.println(&quot;Destroy&quot;);
+<span class="nc" id="L93">        world.destroyBody(b);</span>
+<span class="nc" id="L94">      }</span>
+<span class="nc" id="L95">      bodiesToBeRemoved.clear();</span>
+    }
+
+<span class="nc" id="L98">  }</span>
+
+  /**
+   * Handles collisions between entities, specifically for sensor interactions.
+   * Normal collisions are managed automatically by the world.step method.
+   *
+   * Only handles sensors, Normal collisons are handled by the world.step method.
+   *
+   * @param fixtureA The first fixture involved in the collision.
+   * @param fixtureB The second fixture involved in the collision.
+   * @param isStart Indicates whether this is the beginning of the collision (true) or the end (false).
+   */
+  public static void handleCollisions(Fixture fixtureA, Fixture fixtureB, boolean isStart){
+<span class="nc" id="L111">    Object A = fixtureA.getBody().getUserData();</span>
+<span class="nc" id="L112">    Object B = fixtureB.getBody().getUserData();</span>
+<span class="nc bnc" id="L113" title="All 4 branches missed.">    if(A != null &amp;&amp; B != null) {</span>
+<span class="nc bnc" id="L114" title="All 4 branches missed.">      if (A instanceof Interactable &amp;&amp; B instanceof Interactable) {</span>
+<span class="nc bnc" id="L115" title="All 4 branches missed.">          if(fixtureA.isSensor() &amp;&amp; !fixtureB.isSensor()){   </span>
+<span class="nc bnc" id="L116" title="All 4 branches missed.">            if (A instanceof Interactable objA &amp;&amp; B instanceof Interactable objB) {</span>
+<span class="nc" id="L117">              objA.interact(objB, isStart);</span>
+<span class="nc" id="L118">              objB.interact(objA, isStart);</span>
+            }
+<span class="nc bnc" id="L120" title="All 4 branches missed.">          } else if(!fixtureA.isSensor() &amp;&amp; fixtureB.isSensor()){</span>
+<span class="nc bnc" id="L121" title="All 4 branches missed.">            if (A instanceof Interactable objA &amp;&amp; B instanceof Interactable objB) {</span>
+<span class="nc" id="L122">              objB.interact(objA, isStart);</span>
+<span class="nc" id="L123">              objA.interact(objB, isStart);</span>
+            }
+          } 
+      } 
+    }
+<span class="nc" id="L128">  }</span>
+
+  /**
+   * Removes all bodies from the world and clears the entity map.
+   */
+  public static void removeAllBodies(){
+<span class="nc" id="L134">    Array&lt;Body&gt; bodies = new Array&lt;&gt;();</span>
+<span class="nc" id="L135">    world.getBodies(bodies);</span>
+<span class="nc bnc" id="L136" title="All 2 branches missed.">    for(Body b : bodies){</span>
+<span class="nc" id="L137">      world.destroyBody(b);</span>
+<span class="nc" id="L138">    }</span>
+
+<span class="nc" id="L140">    entityMap.clear();</span>
+<span class="nc" id="L141">  }</span>
+
+  /**
+   * Populates the entity map with entities, mapping their hashcodes to their instances.
+   *
+   * @param entities An array of entities to be added to the map.
+   */
+  public static void fillEntityMap(ArrayList&lt;Entity&gt; entities){
+<span class="nc bnc" id="L149" title="All 2 branches missed.">    for(Entity entity : entities){</span>
+<span class="nc" id="L150">      entityMap.put(entity.hashCode(), entity);</span>
+<span class="nc" id="L151">    }</span>
+<span class="nc" id="L152">  }</span>
+
+  /**
+   * Adds an entity to the entity map.
+   * @param hashCode
+   * @param entity
+   */
+  public static void addEntity(int hashCode, Entity entity){
+<span class="fc" id="L160">    entityMap.put(hashCode, entity);</span>
+<span class="fc" id="L161">  }</span>
+
+  /**
+   * Removes an entity from the entity map.
+   * @param hashCode
+   */
+
+  public static void removeEntity(int hashCode){
+<span class="nc" id="L169">    entityMap.remove(hashCode);</span>
+<span class="nc" id="L170">  }</span>
+
+  /**
+   * Returns an array of all entities in the entity map.
+   * @return
+   */
+
+  public static Array&lt;Entity&gt; getEntities(){
+<span class="nc" id="L178">    Array&lt;Entity&gt; entities = new Array&lt;&gt;();</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">    for(Entity entity : entityMap.values()){</span>
+<span class="nc" id="L180">      entities.add(entity);</span>
+<span class="nc" id="L181">    }</span>
+<span class="nc" id="L182">    return entities;</span>
+  }
+
+  public static void drawHitboxes(OrthographicCamera camera) {
+<span class="nc bnc" id="L186" title="All 2 branches missed.">    if (debugRenderer == null) {</span>
+<span class="nc" id="L187">      debugRenderer = new Box2DDebugRenderer();</span>
+    }
+<span class="nc" id="L189">    debugRenderer.render(world, camera.combined);</span>
+<span class="nc" id="L190">  }</span>
+
+  public static void removeBody(Body physicalBody) {
+<span class="nc" id="L193">    bodiesToBeRemoved.add(physicalBody);</span>
+<span class="nc" id="L194">  }</span>
+
+  public static int setEntityId() {
+<span class="fc" id="L197">    entityId = entityId+1;</span>
+<span class="fc" id="L198">    return entityId;</span>
+  }
+
+  public static void loadMap(Map map, ITileBodyCreator tileBodyCreator) {
+<span class="nc bnc" id="L202" title="All 2 branches missed.">    for (MapEntry tile : map) {</span>
+<span class="nc" id="L203">      Vector2 tilePosition =</span>
+<span class="nc" id="L204">      new Vector2(map.getTileSize() * tile.col(), map.getTileSize() * tile.row());</span>
+<span class="nc" id="L205">      tileBodyCreator.createTileBody(tileBodies, tile.tileType(), tilePosition, map.getTileSize());</span>
+<span class="nc" id="L206">    }</span>
+<span class="nc" id="L207">    Box2DWorldStatic.intmap = map.getIntMap();</span>
+<span class="nc" id="L208">  }</span>
+
+  public static Entity getPlayer() {
+<span class="nc bnc" id="L211" title="All 2 branches missed.">    if (playerID == 0) {</span>
+<span class="nc" id="L212">      Collection&lt;Integer&gt; entityKeys = entityMap.keySet();</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">      for (int entityKey : entityKeys) {</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">        if (entityMap.get(entityKey) instanceof Player player) {</span>
+<span class="nc" id="L215">          playerID = player.hashCode();</span>
+<span class="nc" id="L216">          return player;</span>
+        }
+<span class="nc" id="L218">      }</span>
+    }
+    // System.out.println(playerID);
+    try {
+<span class="nc" id="L222">      return entityMap.get(playerID);</span>
+<span class="nc" id="L223">    } catch (Exception e) {</span>
+<span class="nc" id="L224">      return null;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

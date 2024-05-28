@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Media.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.view</a> &gt; <span class="el_source">Media.java</span></div><h1>Media.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.view;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
+
+<span class="nc" id="L8">public class Media {</span>
+    public static Texture player;
+
+    public static Texture ground;
+    public static Texture space1, space2, space3, space4, space5;
+    public static Texture wallTop, wallTop2, wallTop3, wallBottom, wallLeft, wallRight;
+    public static Texture wallTopLeftInside, wallTopRightInside, wallBottomLeftInside, wallBottomRightInside;
+    public static Texture wallTopLeftOutside, wallTopRightOutside, wallBottomLeftOutside, wallBottomRightOutside;
+    public static Texture wallVertical;
+    public static Texture alien, alienTwo;
+    public static Texture bullet;
+    public static Texture black, red, gray, green, brightGreen;
+    public static Texture redPlayer, orangePlayer, yellowPlayer, greenPlayer, bluePlayer, indigoPlayer, purplePlayer, star, healthPacket, raygun;
+    public static Texture alienBomber1, alienBomber2, alienBomber3, alienBomber4, explosion;
+    public static Texture redDot, greenDot;
+    public static Sound laser1, laser2, laser3, laser4, laser5, laser6, laser7, laser8, laser9;
+    public static Sound punch1, punch2, punch3, punch4;
+    public static Sound explode;
+    public static Music loadingMusic, battleMusic;
+    private static Texture startBackground, buttonOffStart, buttonOnStart, buttonOffExit, buttonOnExit;
+
+    public static void load_assets() {
+<span class="fc" id="L30">        player = new Texture(Gdx.files.internal(&quot;images/player.png&quot;));</span>
+
+<span class="fc" id="L32">        ground = new Texture(Gdx.files.internal(&quot;images/floor_tile.png&quot;));</span>
+
+<span class="fc" id="L34">        space1 = new Texture(Gdx.files.internal(&quot;images/black.png&quot;));</span>
+<span class="fc" id="L35">        space2 = new Texture(Gdx.files.internal(&quot;images/black.png&quot;));</span>
+<span class="fc" id="L36">        space3 = new Texture(Gdx.files.internal(&quot;images/black.png&quot;));</span>
+<span class="fc" id="L37">        space4 = new Texture(Gdx.files.internal(&quot;images/black.png&quot;));</span>
+<span class="fc" id="L38">        space5 = new Texture(Gdx.files.internal(&quot;images/black.png&quot;));</span>
+
+        // Wall textures retrieved from https://opengameart.org/content/warped-top-down-tech-lab
+
+<span class="fc" id="L42">        wallTop = new Texture(Gdx.files.internal(&quot;images/wall_tiles/simple_walls/wall_tile_north_1.png&quot;));</span>
+<span class="fc" id="L43">        wallTop2 = new Texture(Gdx.files.internal(&quot;images/wall_tiles/simple_walls/wall_tile_north_2.png&quot;));</span>
+<span class="fc" id="L44">        wallTop3 = new Texture(Gdx.files.internal(&quot;images/wall_tiles/simple_walls/wall_tile_north_3.png&quot;));</span>
+<span class="fc" id="L45">        wallBottom = new Texture(Gdx.files.internal(&quot;images/wall_tiles/simple_walls/wall_tile_south.png&quot;));</span>
+<span class="fc" id="L46">        wallLeft = new Texture(Gdx.files.internal(&quot;images/wall_tiles/simple_walls/wall_tile_east.png&quot;));</span>
+<span class="fc" id="L47">        wallRight = new Texture(Gdx.files.internal(&quot;images/wall_tiles/simple_walls/wall_tile_west.png&quot;));</span>
+
+<span class="fc" id="L49">        wallTopLeftInside = new Texture(Gdx.files.internal(&quot;images/wall_tiles/inside_corners/wall_tile_NW_inside.png&quot;));</span>
+<span class="fc" id="L50">        wallTopRightInside = new Texture(Gdx.files.internal(&quot;images/wall_tiles/inside_corners/wall_tile_NE_inside.png&quot;));</span>
+<span class="fc" id="L51">        wallBottomLeftInside = new Texture(Gdx.files.internal(&quot;images/wall_tiles/inside_corners/wall_tile_SW_inside.png&quot;));</span>
+<span class="fc" id="L52">        wallBottomRightInside = new Texture(Gdx.files.internal(&quot;images/wall_tiles/inside_corners/wall_tile_SE_inside.png&quot;));</span>
+
+<span class="fc" id="L54">        wallTopLeftOutside = new Texture(Gdx.files.internal(&quot;images/wall_tiles/outside_corners/wall_tile_NW_outside.png&quot;));</span>
+<span class="fc" id="L55">        wallTopRightOutside = new Texture(Gdx.files.internal(&quot;images/wall_tiles/outside_corners/wall_tile_NE_outside.png&quot;));</span>
+<span class="fc" id="L56">        wallBottomLeftOutside = new Texture(Gdx.files.internal(&quot;images/wall_tiles/outside_corners/wall_tile_SW_outside.png&quot;));</span>
+<span class="fc" id="L57">        wallBottomRightOutside = new Texture(Gdx.files.internal(&quot;images/wall_tiles/outside_corners/wall_tile_SE_outside.png&quot;));</span>
+
+<span class="fc" id="L59">        wallVertical = new Texture(Gdx.files.internal(&quot;images/wall_tiles/vertical_wall/wall_tile_vertical.png&quot;));</span>
+
+<span class="fc" id="L61">        alien = new Texture(Gdx.files.internal(&quot;images/alien.png&quot;));</span>
+<span class="fc" id="L62">        alienTwo = new Texture(Gdx.files.internal(&quot;images/alienTwo.png&quot;));</span>
+<span class="fc" id="L63">        bullet = new Texture(Gdx.files.internal(&quot;images/bullet.png&quot;));</span>
+
+<span class="fc" id="L65">        black = new Texture(Gdx.files.internal(&quot;images/black.png&quot;));</span>
+<span class="fc" id="L66">        red = new Texture(Gdx.files.internal(&quot;images/red.png&quot;));</span>
+<span class="fc" id="L67">        gray = new Texture(Gdx.files.internal(&quot;images/gray.png&quot;));</span>
+<span class="fc" id="L68">        green = new Texture(Gdx.files.internal(&quot;images/green.png&quot;));</span>
+<span class="fc" id="L69">        brightGreen = new Texture(Gdx.files.internal(&quot;images/bright_green.png&quot;));</span>
+
+<span class="fc" id="L71">        startBackground = new Texture(Gdx.files.internal(&quot;images/start_screen_bg.png&quot;));</span>
+<span class="fc" id="L72">        buttonOffStart = new Texture(Gdx.files.internal(&quot;images/buttons/button_off_start.png&quot;));</span>
+<span class="fc" id="L73">        buttonOnStart = new Texture(Gdx.files.internal(&quot;images/buttons/button_on_start.png&quot;));</span>
+<span class="fc" id="L74">        buttonOffExit = new Texture(Gdx.files.internal(&quot;images/buttons/button_off_exit.png&quot;));</span>
+<span class="fc" id="L75">        buttonOnExit = new Texture(Gdx.files.internal(&quot;images/buttons/button_on_exit.png&quot;));</span>
+
+<span class="fc" id="L77">        redDot = new Texture(Gdx.files.internal(&quot;images/redDot.png&quot;));</span>
+<span class="fc" id="L78">        greenDot = new Texture(Gdx.files.internal(&quot;images/greenDot.png&quot;));</span>
+
+<span class="fc" id="L80">        redPlayer = new Texture(Gdx.files.internal(&quot;images/powerup/redPlayer.png&quot;));</span>
+<span class="fc" id="L81">        orangePlayer = new Texture(Gdx.files.internal(&quot;images/powerup/orangePlayer.png&quot;));</span>
+<span class="fc" id="L82">        yellowPlayer = new Texture(Gdx.files.internal(&quot;images/powerup/yellowPlayer.png&quot;));</span>
+<span class="fc" id="L83">        greenPlayer = new Texture(Gdx.files.internal(&quot;images/powerup/greenPlayer.png&quot;));</span>
+<span class="fc" id="L84">        bluePlayer = new Texture(Gdx.files.internal(&quot;images/powerup/bluePlayer.png&quot;));</span>
+<span class="fc" id="L85">        indigoPlayer = new Texture(Gdx.files.internal(&quot;images/powerup/indigoPlayer.png&quot;));</span>
+<span class="fc" id="L86">        purplePlayer = new Texture(Gdx.files.internal(&quot;images/powerup/purplePlayer.png&quot;));</span>
+<span class="fc" id="L87">        star = new Texture(Gdx.files.internal(&quot;images/powerup/star.png&quot;));</span>
+<span class="fc" id="L88">        healthPacket = new Texture(Gdx.files.internal(&quot;images/powerup/HealthPacket.png&quot;));</span>
+<span class="fc" id="L89">        raygun = new Texture(Gdx.files.internal(&quot;images/powerup/raygun.png&quot;));</span>
+
+<span class="fc" id="L91">        alienBomber1 = new Texture(Gdx.files.internal(&quot;images/alienBomber/alienBomber.png&quot;));</span>
+<span class="fc" id="L92">        alienBomber2 = new Texture(Gdx.files.internal(&quot;images/alienBomber/alienBomber1.png&quot;));</span>
+<span class="fc" id="L93">        alienBomber3 = new Texture(Gdx.files.internal(&quot;images/alienBomber/alienBomber2.png&quot;));</span>
+<span class="fc" id="L94">        alienBomber4 = new Texture(Gdx.files.internal(&quot;images/alienBomber/alienBomber3.png&quot;));</span>
+<span class="fc" id="L95">        explosion = new Texture(Gdx.files.internal(&quot;images/alienBomber/explosion.png&quot;));</span>
+
+<span class="fc" id="L97">        laser1 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/laser1.mp3&quot;));</span>
+<span class="fc" id="L98">        laser2 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/laser2.mp3&quot;));</span>
+<span class="fc" id="L99">        laser3 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/laser3.mp3&quot;));</span>
+<span class="fc" id="L100">        laser4 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/laser4.mp3&quot;));</span>
+<span class="fc" id="L101">        laser5 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/laser5.mp3&quot;));</span>
+<span class="fc" id="L102">        laser6 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/laser6.mp3&quot;));</span>
+<span class="fc" id="L103">        laser7 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/laser7.mp3&quot;));</span>
+<span class="fc" id="L104">        laser8 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/laser8.mp3&quot;));</span>
+<span class="fc" id="L105">        laser9 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/laser9.mp3&quot;));</span>
+
+<span class="fc" id="L107">        punch1 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/hit01.ogg&quot;));</span>
+<span class="fc" id="L108">        punch2 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/hit02.ogg&quot;));</span>
+<span class="fc" id="L109">        punch3 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/hit03.ogg&quot;));</span>
+<span class="fc" id="L110">        punch4 = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/hit04.ogg&quot;));</span>
+
+<span class="fc" id="L112">        explode = Gdx.audio.newSound(Gdx.files.internal(&quot;audio/Chunky Explosion.mp3&quot;));</span>
+
+<span class="fc" id="L114">        loadingMusic = Gdx.audio.newMusic(Gdx.files.internal(&quot;audio/loading.wav&quot;));</span>
+<span class="fc" id="L115">        battleMusic = Gdx.audio.newMusic(Gdx.files.internal(&quot;audio/battle.ogg&quot;));</span>
+
+<span class="fc" id="L117">    }</span>
+
+    public static Sound[] getPunchSounds() {
+<span class="fc" id="L120">        return new Sound[]{punch1, punch2, punch3, punch4};</span>
+    }
+
+    public static Sound[] getLaserSounds() {
+<span class="fc" id="L124">        return new Sound[]{laser1, laser2, laser3, laser4, laser5, laser6, laser7, laser8, laser9};</span>
+    }
+
+    public static Texture[] getGodModeColors() {
+<span class="fc" id="L128">        return new Texture[]{redPlayer, orangePlayer, yellowPlayer, greenPlayer, bluePlayer, indigoPlayer, purplePlayer};</span>
+    }
+
+    public static Texture[] getAlienBomber() {
+<span class="fc" id="L132">        return new Texture[]{alienBomber1, alienBomber2, alienBomber3, alienBomber4};</span>
+    }
+
+    public static Texture getTexture(String texture) {
+<span class="fc bfc" id="L136" title="All 36 branches covered.">        return switch (texture) {</span>
+<span class="fc" id="L137">            case &quot;player&quot; -&gt; player;</span>
+<span class="fc" id="L138">            case &quot;ground&quot; -&gt; ground;</span>
+<span class="fc" id="L139">            case &quot;space1&quot; -&gt; space1;</span>
+<span class="fc" id="L140">            case &quot;space2&quot; -&gt; space2;</span>
+<span class="fc" id="L141">            case &quot;space3&quot; -&gt; space3;</span>
+<span class="fc" id="L142">            case &quot;space4&quot; -&gt; space4;</span>
+<span class="fc" id="L143">            case &quot;space5&quot; -&gt; space5;</span>
+<span class="fc" id="L144">            case &quot;wallTop&quot; -&gt; wallTop;</span>
+<span class="fc" id="L145">            case &quot;wallTop2&quot; -&gt; wallTop2;</span>
+<span class="fc" id="L146">            case &quot;wallTop3&quot; -&gt; wallTop3;</span>
+<span class="fc" id="L147">            case &quot;wallBottom&quot; -&gt; wallBottom;</span>
+<span class="fc" id="L148">            case &quot;wallLeft&quot; -&gt; wallLeft;</span>
+<span class="fc" id="L149">            case &quot;wallRight&quot; -&gt; wallRight;</span>
+<span class="fc" id="L150">            case &quot;wallTopLeftInside&quot; -&gt; wallTopLeftInside;</span>
+<span class="fc" id="L151">            case &quot;wallTopRightInside&quot; -&gt; wallTopRightInside;</span>
+<span class="fc" id="L152">            case &quot;wallBottomLeftInside&quot; -&gt; wallBottomLeftInside;</span>
+<span class="fc" id="L153">            case &quot;wallBottomRightInside&quot; -&gt; wallBottomRightInside;</span>
+<span class="fc" id="L154">            case &quot;wallTopLeftOutside&quot; -&gt; wallTopLeftOutside;</span>
+<span class="fc" id="L155">            case &quot;wallTopRightOutside&quot; -&gt; wallTopRightOutside;</span>
+<span class="fc" id="L156">            case &quot;wallBottomLeftOutside&quot; -&gt; wallBottomLeftOutside;</span>
+<span class="fc" id="L157">            case &quot;wallBottomRightOutside&quot; -&gt; wallBottomRightOutside;</span>
+<span class="fc" id="L158">            case &quot;wallVertical&quot; -&gt; wallVertical;</span>
+<span class="fc" id="L159">            case &quot;alien&quot; -&gt; alien;</span>
+<span class="fc" id="L160">            case &quot;alienTwo&quot; -&gt; alienTwo;</span>
+<span class="fc" id="L161">            case &quot;bullet&quot; -&gt; bullet;</span>
+<span class="fc" id="L162">            case &quot;black&quot; -&gt; black;</span>
+<span class="fc" id="L163">            case &quot;red&quot; -&gt; red;</span>
+<span class="fc" id="L164">            case &quot;gray&quot; -&gt; gray;</span>
+<span class="fc" id="L165">            case &quot;green&quot; -&gt; green;</span>
+<span class="fc" id="L166">            case &quot;brightGreen&quot; -&gt; brightGreen;</span>
+<span class="fc" id="L167">            case &quot;startBackground&quot; -&gt; startBackground;</span>
+<span class="fc" id="L168">            case &quot;buttonOffStart&quot; -&gt; buttonOffStart;</span>
+<span class="fc" id="L169">            case &quot;buttonOnStart&quot; -&gt; buttonOnStart;</span>
+<span class="fc" id="L170">            case &quot;buttonOffExit&quot; -&gt; buttonOffExit;</span>
+<span class="fc" id="L171">            case &quot;buttonOnExit&quot; -&gt; buttonOnExit;</span>
+<span class="fc" id="L172">            default -&gt; null;</span>
+        };
+    }
+
+    public static void dispose() {
+<span class="nc" id="L177">        player.dispose();</span>
+<span class="nc" id="L178">        ground.dispose();</span>
+<span class="nc" id="L179">        space1.dispose();</span>
+<span class="nc" id="L180">        space2.dispose();</span>
+<span class="nc" id="L181">        space3.dispose();</span>
+<span class="nc" id="L182">        space4.dispose();</span>
+<span class="nc" id="L183">        space5.dispose();</span>
+<span class="nc" id="L184">        wallTop.dispose();</span>
+<span class="nc" id="L185">        wallTop2.dispose();</span>
+<span class="nc" id="L186">        wallTop3.dispose();</span>
+<span class="nc" id="L187">        wallBottom.dispose();</span>
+<span class="nc" id="L188">        wallLeft.dispose();</span>
+<span class="nc" id="L189">        wallRight.dispose();</span>
+<span class="nc" id="L190">        wallTopLeftInside.dispose();</span>
+<span class="nc" id="L191">        wallTopRightInside.dispose();</span>
+<span class="nc" id="L192">        wallBottomLeftInside.dispose();</span>
+<span class="nc" id="L193">        wallBottomRightInside.dispose();</span>
+<span class="nc" id="L194">        wallTopLeftOutside.dispose();</span>
+<span class="nc" id="L195">        wallTopRightOutside.dispose();</span>
+<span class="nc" id="L196">        wallBottomLeftOutside.dispose();</span>
+<span class="nc" id="L197">        wallBottomRightOutside.dispose();</span>
+<span class="nc" id="L198">        wallVertical.dispose();</span>
+<span class="nc" id="L199">        alien.dispose();</span>
+<span class="nc" id="L200">        alienTwo.dispose();</span>
+<span class="nc" id="L201">        bullet.dispose();</span>
+<span class="nc" id="L202">        black.dispose();</span>
+<span class="nc" id="L203">        red.dispose();</span>
+<span class="nc" id="L204">        gray.dispose();</span>
+<span class="nc" id="L205">        green.dispose();</span>
+<span class="nc" id="L206">        brightGreen.dispose();</span>
+<span class="nc" id="L207">        startBackground.dispose();</span>
+<span class="nc" id="L208">        buttonOffStart.dispose();</span>
+<span class="nc" id="L209">        buttonOnStart.dispose();</span>
+<span class="nc" id="L210">        buttonOffExit.dispose();</span>
+<span class="nc" id="L211">        buttonOnExit.dispose();</span>
+<span class="nc" id="L212">        redDot.dispose();</span>
+<span class="nc" id="L213">        greenDot.dispose();</span>
+<span class="nc" id="L214">        redPlayer.dispose();</span>
+<span class="nc" id="L215">        orangePlayer.dispose();</span>
+<span class="nc" id="L216">        yellowPlayer.dispose();</span>
+<span class="nc" id="L217">        greenPlayer.dispose();</span>
+<span class="nc" id="L218">        bluePlayer.dispose();</span>
+<span class="nc" id="L219">        indigoPlayer.dispose();</span>
+<span class="nc" id="L220">        purplePlayer.dispose();</span>
+<span class="nc" id="L221">        star.dispose();</span>
+<span class="nc" id="L222">        healthPacket.dispose();</span>
+<span class="nc" id="L223">        raygun.dispose();</span>
+<span class="nc" id="L224">        alienBomber1.dispose();</span>
+<span class="nc" id="L225">        alienBomber2.dispose();</span>
+<span class="nc" id="L226">        alienBomber3.dispose();</span>
+<span class="nc" id="L227">        alienBomber4.dispose();</span>
+<span class="nc" id="L228">        explosion.dispose();</span>
+<span class="nc" id="L229">        laser1.dispose();</span>
+<span class="nc" id="L230">        laser2.dispose();</span>
+<span class="nc" id="L231">        laser3.dispose();</span>
+<span class="nc" id="L232">        laser4.dispose();</span>
+<span class="nc" id="L233">        laser5.dispose();</span>
+<span class="nc" id="L234">        laser6.dispose();</span>
+<span class="nc" id="L235">        laser7.dispose();</span>
+<span class="nc" id="L236">        laser8.dispose();</span>
+<span class="nc" id="L237">        laser9.dispose();</span>
+<span class="nc" id="L238">        punch1.dispose();</span>
+<span class="nc" id="L239">        punch2.dispose();</span>
+<span class="nc" id="L240">        punch3.dispose();</span>
+<span class="nc" id="L241">        punch4.dispose();</span>
+<span class="nc" id="L242">        explode.dispose();</span>
+<span class="nc" id="L243">        loadingMusic.dispose();</span>
+<span class="nc" id="L244">        battleMusic.dispose();</span>
+<span class="nc" id="L245">    }</span>
+}
+
+
+//https://opengameart.org/content/63-digital-sound-effects-lasers-phasers-space-etc
+//Attribution Instructions:
+//Credit &quot;Kenney.nl&quot; or &quot;www.kenney.nl&quot;, this is not mandatory.
+
+//https://opengameart.org/content/loading-screen-loop
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

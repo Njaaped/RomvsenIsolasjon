@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Alien.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model.entity.alien</a> &gt; <span class="el_source">Alien.java</span></div><h1>Alien.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model.entity.alien;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.RayCastCallback;
+
+import inf112.skeleton.app.event.GlobalEventBus;
+import inf112.skeleton.app.event.IEventBus;
+import inf112.skeleton.app.model.box2d.BodyFactory;
+import inf112.skeleton.app.model.box2d.Box2DWorldStatic;
+import inf112.skeleton.app.model.entity.Entity;
+import inf112.skeleton.app.model.entity.Interactable;
+import inf112.skeleton.app.model.entity.player.Player;
+import inf112.skeleton.app.model.mapfactories.maputils.AStar;
+import inf112.skeleton.app.model.score.ScoreEvent;
+
+
+// Base class for all Aliens
+public abstract class Alien extends Entity implements Interactable {
+    protected double speed;
+    protected boolean seen;
+    protected int pathCounter;
+    protected List&lt;AStar.Node&gt; path;
+    protected static final float REACH_THRESHOLD = 0.05f;
+    protected int pointValue;
+
+    public Alien(Vector2 pos, float width, float height, double defaultSpeed, int pointValue, Texture texture) {
+<span class="fc" id="L33">        super(</span>
+            pos,
+            width,
+            height,
+<span class="fc" id="L37">            BodyFactory.createPhysicalBodyRound(width / 1.3f, height / 1.3f, pos, BodyDef.BodyType.DynamicBody),</span>
+            null,
+            texture
+        );
+<span class="fc" id="L41">        Box2DWorldStatic.addEntity(this.hashCode(), this);</span>
+<span class="fc" id="L42">        this.speed = defaultSpeed;</span>
+<span class="fc" id="L43">        this.pointValue = pointValue;</span>
+<span class="fc" id="L44">        this.seen = false;</span>
+<span class="fc" id="L45">        this.pathCounter = 0;</span>
+<span class="fc" id="L46">        this.path = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L47">    }</span>
+
+    protected void walkTowards(Entity entity) {
+<span class="fc" id="L50">        Vector2 currentPos = getPosition().cpy();</span>
+    
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        if (canSee(entity)){</span>
+<span class="fc" id="L53">          Vector2 targetPos = entity.getPosition().cpy();</span>
+<span class="fc" id="L54">          Vector2 movementDirection = (targetPos.add(currentPos.scl(-1))).nor();</span>
+<span class="fc" id="L55">          this.physicalBody.setLinearVelocity(movementDirection.scl((float) this.speed));</span>
+<span class="fc" id="L56">          return;</span>
+        }
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (pathCounter == 0) {</span>
+<span class="nc" id="L59">          calculatePath(entity);</span>
+        }
+<span class="nc" id="L61">        pathCounter++;</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">        if (pathCounter &gt; 500) {</span>
+<span class="nc" id="L63">          pathCounter = 0;</span>
+        }
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (path == null) {</span>
+<span class="nc" id="L66">          throw new RuntimeException(&quot;Path is null&quot;);</span>
+        }
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (path.size() == 0) {</span>
+<span class="nc" id="L69">          calculatePath(entity);</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">          if (path.size() == 0) {</span>
+<span class="nc" id="L71">            return;</span>
+          }
+        }
+<span class="nc" id="L74">        AStar.Node nextNode = path.get(0);</span>
+<span class="nc" id="L75">        float centerRow = nextNode.getRow() + 0.5f;</span>
+<span class="nc" id="L76">        float centerCol = nextNode.getCol() + 0.5f;</span>
+<span class="nc" id="L77">        Vector2 nextNodePos = new Vector2(centerCol, centerRow);</span>
+<span class="nc" id="L78">        Vector2 movementDirection = (nextNodePos.cpy().add(currentPos.cpy().scl(-1))).nor();</span>
+<span class="nc" id="L79">        this.physicalBody.setLinearVelocity(movementDirection.scl((float) this.speed));</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        if (currentPos.dst(nextNodePos) &lt; REACH_THRESHOLD) {</span>
+<span class="nc" id="L81">          path.remove(0);</span>
+        } 
+<span class="nc" id="L83">      } </span>
+    
+      protected void calculatePath(Entity entity) {
+<span class="nc" id="L86">        int posCol = (int) getPosition().x;</span>
+<span class="nc" id="L87">        int posRow = (int) getPosition().y;</span>
+<span class="nc" id="L88">        int targetCol = (int) entity.getPosition().x;</span>
+<span class="nc" id="L89">        int targetRow = (int) entity.getPosition().y;</span>
+<span class="nc" id="L90">        int[][] map = Box2DWorldStatic.intmap;</span>
+<span class="nc" id="L91">        path = AStar.algorithm(map, posRow, posCol, targetRow, targetCol);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (path == null) {</span>
+<span class="nc" id="L93">          return;</span>
+        }
+<span class="nc bnc" id="L95" title="All 2 branches missed.">        if (path.size() == 0) {</span>
+<span class="nc" id="L96">          return;</span>
+        }
+<span class="nc" id="L98">        path.remove(0);</span>
+<span class="nc" id="L99">      }</span>
+    
+      protected double distanceTo(Entity entity) {
+<span class="fc" id="L102">        Vector2 targetPos = entity.getPosition().cpy();</span>
+<span class="fc" id="L103">        Vector2 currentPos = getPosition().cpy();</span>
+<span class="fc" id="L104">        double targetLength = (targetPos.add(currentPos.scl(-1))).len();</span>
+<span class="fc" id="L105">        return targetLength;</span>
+      }
+    
+      protected Vector2 directionTo(Entity entity) {
+<span class="fc" id="L109">        Vector2 targetPos = entity.getPosition().cpy();</span>
+<span class="fc" id="L110">        Vector2 currentPos = getPosition().cpy();</span>
+<span class="fc" id="L111">        Vector2 directionVector = targetPos.add(currentPos.scl(-1));</span>
+<span class="fc" id="L112">        return directionVector;</span>
+      }
+    
+      protected boolean canSee(Entity entity) {
+<span class="fc" id="L116">        final boolean[] canSee = {true}; </span>
+    
+<span class="fc" id="L118">        Vector2 targetPosition = entity.getPosition().cpy();</span>
+<span class="fc" id="L119">        Vector2 currentPosition = getPosition().cpy();</span>
+    
+<span class="fc" id="L121">        Box2DWorldStatic.world.rayCast(new RayCastCallback() {</span>
+            @Override
+            public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+<span class="fc" id="L124">              Object userData = fixture.getBody().getUserData();</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">              if (!(userData instanceof Player)) {</span>
+<span class="fc" id="L126">                canSee[0] = false;</span>
+<span class="fc" id="L127">                return 0;</span>
+              }
+<span class="fc" id="L129">              return fraction;</span>
+            }
+        }, currentPosition, targetPosition); 
+    
+<span class="fc" id="L133">        return canSee[0];</span>
+      }
+
+    public void defeated() {
+<span class="fc" id="L137">        IEventBus bus = GlobalEventBus.getInstance(1);</span>
+<span class="fc" id="L138">        bus.trigger(&quot;EnemyDefeated&quot;, new ScoreEvent(this, this.pointValue));</span>
+<span class="fc" id="L139">        dispose();</span>
+<span class="fc" id="L140">    }</span>
+
+
+    @Override
+    public void update(float deltaTime) {
+<span class="fc" id="L145">          Player player = (Player) Box2DWorldStatic.getPlayer();</span>
+      
+<span class="fc" id="L147">          double dist = distanceTo(player);</span>
+      
+<span class="fc bfc" id="L149" title="All 2 branches covered.">          if (dist &lt; 15d) {</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            if (!seen) {</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">              if (canSee(player)) {</span>
+<span class="fc" id="L152">                seen = true;</span>
+              }
+            } else {
+<span class="fc" id="L155">              walkTowards(player);</span>
+            }
+          } else {
+<span class="fc" id="L158">            this.physicalBody.setLinearVelocity(Vector2.Zero);</span>
+          }
+<span class="fc" id="L160">        updateBehavior(deltaTime);</span>
+<span class="fc" id="L161">    }</span>
+
+    @Override
+    public void changeHealth(float damage) {
+<span class="fc" id="L165">        defeated();</span>
+<span class="fc" id="L166">    }</span>
+
+    @Override
+    public void interact(Interactable target, boolean isStart) {
+<span class="fc" id="L170">      interactBehavior(target, isStart);</span>
+<span class="fc" id="L171">    }</span>
+
+    @Override 
+    public Class&lt;?&gt; getOwnerType() {
+<span class="fc" id="L175">        return this.getClass();</span>
+    }
+    
+    /**
+     * Updates the alien for specific alien
+     * @param deltaTime
+     */
+    protected abstract void updateBehavior(float deltaTime);
+
+    /**
+     * Interacts with target for specific alien
+     * @param target
+     * @param isStart
+     */
+
+    protected abstract void interactBehavior(Interactable target, boolean isStart);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

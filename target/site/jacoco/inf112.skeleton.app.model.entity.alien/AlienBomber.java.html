@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AlienBomber.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model.entity.alien</a> &gt; <span class="el_source">AlienBomber.java</span></div><h1>AlienBomber.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model.entity.alien;
+
+
+import com.badlogic.gdx.math.Vector2;
+
+import inf112.skeleton.app.event.GlobalEventBus;
+import inf112.skeleton.app.event.IEventBus;
+import inf112.skeleton.app.model.audio.SoundEffectEvent;
+import inf112.skeleton.app.model.entity.Interactable;
+import inf112.skeleton.app.model.entity.player.Player;
+import inf112.skeleton.app.model.entity.weapon.Cooldown;
+import inf112.skeleton.app.view.Media;
+
+public class AlienBomber extends Alien implements Cooldown {
+    private static final double DEFAULT_SPEED = 2;
+    private static final float WIDTH = 1f;
+    private static final float HEIGHT = 1f;
+    private static final int POINT_VALUE = 15;
+    private boolean exploded;
+    private int surviveTime;
+<span class="fc" id="L21">    private final int TIME_TO_SURVIVE_AFTER_EXPLOSION = 20;</span>
+    private int textureCounter;
+    private final int bombDamage;
+
+    
+  
+    public AlienBomber(Vector2 pos, int bombDamage) {
+<span class="fc" id="L28">        super(</span>
+<span class="fc" id="L29">            pos,</span>
+<span class="fc" id="L30">            WIDTH,</span>
+<span class="fc" id="L31">            HEIGHT,</span>
+<span class="fc" id="L32">            DEFAULT_SPEED,</span>
+<span class="fc" id="L33">                POINT_VALUE,</span>
+<span class="fc" id="L34">                Media.alienBomber1</span>
+        );
+<span class="fc" id="L36">        this.textureCounter = 0;</span>
+<span class="fc" id="L37">        this.exploded = false;</span>
+<span class="fc" id="L38">        this.surviveTime = TIME_TO_SURVIVE_AFTER_EXPLOSION;</span>
+<span class="fc" id="L39">        this.bombDamage = bombDamage;</span>
+<span class="fc" id="L40">    }</span>
+    
+    @Override
+    protected void updateBehavior(float deltaTime) {
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">      if (!exploded) {</span>
+<span class="fc" id="L45">        this.primaryTexture = Media.getAlienBomber()[textureCounter % Media.getAlienBomber().length];</span>
+<span class="fc" id="L46">        textureCounter++;</span>
+      }
+<span class="fc" id="L48">      reduceCooldown();</span>
+<span class="fc" id="L49">    }</span>
+  
+    @Override
+    public void interactBehavior(Interactable target, boolean isStart) {
+<span class="fc bfc" id="L53" title="All 2 branches covered.">      if (target instanceof Player) {</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">        if (isStart) {</span>
+<span class="fc" id="L55">          Player player = (Player) target;</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">          if (!exploded) {</span>
+<span class="fc" id="L57">              player.changeHealth(-bombDamage);</span>
+<span class="fc" id="L58">              this.exploded = true;</span>
+<span class="fc" id="L59">              this.primaryTexture = Media.explosion;</span>
+<span class="fc" id="L60">              IEventBus bus = GlobalEventBus.getInstance(2);</span>
+<span class="fc" id="L61">              bus.trigger(&quot;SoundEffect&quot;, new SoundEffectEvent(this, &quot;explode&quot;));</span>
+          }
+        }
+      }
+<span class="fc" id="L65">    }</span>
+
+    @Override
+    public void reduceCooldown() {
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">        if (exploded) {</span>
+<span class="nc" id="L70">            surviveTime--;</span>
+        }
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">        if (surviveTime &lt;= 0) {</span>
+<span class="nc" id="L73">            dispose();</span>
+        }
+<span class="fc" id="L75">    }</span>
+
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

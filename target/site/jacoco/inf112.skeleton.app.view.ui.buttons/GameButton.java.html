@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameButton.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.view.ui.buttons</a> &gt; <span class="el_source">GameButton.java</span></div><h1>GameButton.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.view.ui.buttons;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+
+public class GameButton {
+    private final Texture normalTexture;
+    private final Texture hoverTexture;
+    private final Rectangle bounds;
+    private boolean isHovering;
+
+<span class="fc" id="L13">    public GameButton(Texture normalTexture, Texture hoverTexture, Rectangle bounds) {</span>
+<span class="fc" id="L14">        this.normalTexture = normalTexture;</span>
+<span class="fc" id="L15">        this.hoverTexture = hoverTexture;</span>
+<span class="fc" id="L16">        this.bounds = bounds;</span>
+<span class="fc" id="L17">    }</span>
+
+    public GameButton(Texture normalTexture, Texture hoverTexture, float x, float y, float width, float height) {
+<span class="fc" id="L20">        this(normalTexture, hoverTexture, new Rectangle(x, y, width, height));</span>
+<span class="fc" id="L21">    }</span>
+
+    public void setHovering(boolean isHovering) {
+<span class="nc" id="L24">        this.isHovering = isHovering;</span>
+<span class="nc" id="L25">    }</span>
+
+    public void update(float mouseX, float mouseY) {
+<span class="fc" id="L28">        isHovering = bounds.contains(mouseX, mouseY);</span>
+<span class="fc" id="L29">    }</span>
+
+    public void draw(SpriteBatch batch) {
+<span class="fc" id="L32">        Texture activeTexture = normalTexture;</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        if (isHovering) {</span>
+<span class="nc" id="L34">            activeTexture = hoverTexture;</span>
+        }
+<span class="fc" id="L36">        batch.draw(activeTexture, bounds.x, bounds.y, bounds.width, bounds.height);</span>
+
+<span class="fc" id="L38">    }</span>
+
+    public void dispose() {
+<span class="fc" id="L41">        normalTexture.dispose();</span>
+<span class="fc" id="L42">        hoverTexture.dispose();</span>
+<span class="fc" id="L43">    }</span>
+
+    public void setBounds(Rectangle rectangle) {
+<span class="fc" id="L46">        bounds.set(rectangle);</span>
+<span class="fc" id="L47">    }</span>
+
+    public Rectangle getBounds() {
+<span class="fc" id="L50">        return bounds;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

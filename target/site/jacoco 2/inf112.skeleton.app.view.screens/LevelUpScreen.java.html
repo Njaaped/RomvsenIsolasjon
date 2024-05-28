@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LevelUpScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gdx-app</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.view.screens</a> &gt; <span class="el_source">LevelUpScreen.java</span></div><h1>LevelUpScreen.java</h1><pre class="source lang-java linenums">
+package inf112.skeleton.app.view.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+
+
+import inf112.skeleton.app.view.Media;
+
+public class LevelUpScreen implements Screen {
+    private SpriteBatch batch;
+    private Texture background;
+    private BitmapFont font;
+    private OrthographicCamera camera;
+    private float transitionAlpha;
+    private ShapeRenderer shapeRenderer;
+    private int level;
+
+
+<span class="nc" id="L27">    public LevelUpScreen(int level) {</span>
+<span class="nc" id="L28">        shapeRenderer = new ShapeRenderer();</span>
+<span class="nc" id="L29">        batch = new SpriteBatch();</span>
+<span class="nc" id="L30">        font = new BitmapFont();</span>
+<span class="nc" id="L31">        font.getData().setScale(3);</span>
+<span class="nc" id="L32">        camera = new OrthographicCamera();</span>
+<span class="nc" id="L33">        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());</span>
+<span class="nc" id="L34">        transitionAlpha = 0f;</span>
+<span class="nc" id="L35">        this.level = level;</span>
+<span class="nc" id="L36">    }</span>
+
+    @Override
+    public void show() {
+<span class="nc" id="L40">    }</span>
+
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L44">        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+<span class="nc" id="L45">        batch.setProjectionMatrix(camera.combined);</span>
+<span class="nc" id="L46">        batch.begin();</span>
+<span class="nc" id="L47">        GlyphLayout layout = new GlyphLayout();</span>
+<span class="nc" id="L48">        String text = &quot;Level &quot; + level;</span>
+<span class="nc" id="L49">        layout.setText(font, text);</span>
+    
+        // Calculate the x and y position to center the text
+<span class="nc" id="L52">        float x = (Gdx.graphics.getWidth() - layout.width) / 2;</span>
+<span class="nc" id="L53">        float y = (Gdx.graphics.getHeight() + layout.height) / 2;</span>
+<span class="nc" id="L54">        font.draw(batch, text, x, y);</span>
+<span class="nc" id="L55">        batch.draw(Media.black, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());</span>
+
+<span class="nc" id="L57">        batch.end();</span>
+<span class="nc" id="L58">        transitionAlpha = ScreenManager.transitionEffect1(transitionAlpha, 0f, 1f, 1f, shapeRenderer);</span>
+
+
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (transitionAlpha &gt; 0.95f) {</span>
+<span class="nc" id="L62">            ScreenManager.getInstance().showGameScreen();</span>
+        }
+
+<span class="nc" id="L65">    }</span>
+
+    @Override
+    public void resize(int width, int height) {
+<span class="nc" id="L69">        camera.setToOrtho(false, width, height);</span>
+<span class="nc" id="L70">    }</span>
+
+    @Override
+    public void pause() {
+<span class="nc" id="L74">    }</span>
+
+    @Override
+    public void resume() {
+<span class="nc" id="L78">    }</span>
+
+    @Override
+    public void hide() {
+<span class="nc" id="L82">    }</span>
+
+    @Override
+    public void dispose() {
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (batch != null) {</span>
+<span class="nc" id="L87">            batch.dispose();</span>
+        }
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        if (background != null) {</span>
+<span class="nc" id="L90">            background.dispose();</span>
+        }
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (font != null) {</span>
+<span class="nc" id="L93">            font.dispose();</span>
+        }
+<span class="nc" id="L95">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Factory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.factory</a> &gt; <span class="el_source">Factory.java</span></div><h1>Factory.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.factory;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * A generic factory class for creating objects of type T. This class allows registration of multiple producers,
+ * each capable of producing objects of type T, and manages a set of arguments that can be used by these producers.
+ *
+ * @param &lt;T&gt; the type of objects this factory creates
+ */
+public class Factory&lt;T&gt; {
+    private final HashMap&lt;String, Producer&lt;T&gt;&gt; producers; // A map of producer names to their respective Producer instances
+
+    /**
+     * Constructs a new Factory instance with specified maps for producers and arguments.
+     *
+     * @param producers a map of producer names to their respective Producer instances
+     * @param args a map of argument names to their values
+     */
+<span class="fc" id="L21">    private Factory(HashMap&lt;String, Producer&lt;T&gt;&gt; producers) {</span>
+<span class="fc" id="L22">        this.producers = producers;</span>
+<span class="fc" id="L23">    }</span>
+
+    /**
+     * Constructs an empty Factory with no producers and no arguments.
+     */
+    public Factory() {
+<span class="fc" id="L29">        this(new HashMap&lt;&gt;());</span>
+<span class="fc" id="L30">    }</span>
+
+    /**
+     * Adds a producer to the factory.
+     *
+     * @param name the name that identifies the producer
+     * @param producer the producer that creates an object of type T
+     */
+    public void addProducer(String name, Producer&lt;T&gt; producer) {
+<span class="fc" id="L39">        this.producers.put(name, producer);</span>
+<span class="fc" id="L40">    }</span>
+
+    /**
+     * Creates an object of type T using the specified producer.
+     *
+     * @param name the name of the producer to use for creating the object
+     * @return an instance of type T produced by the specified producer, or null if no producer is found for the name
+     */
+    public T create(String name) {
+<span class="fc" id="L49">        return create(name, Map.of());</span>
+    }
+
+    /**
+     * Creates an object of type T using the specified producer.
+     *
+     * @param name the name of the producer to use for creating the object
+     * @param args arguments to be passed in to the producer
+     * @return an instance of type T produced by the specified producer, or null if no producer is found for the name
+     */
+    public T create(String name, Map&lt;String, Object&gt; args) {
+<span class="fc" id="L60">        Producer&lt;T&gt; producer = producers.get(name);</span>
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (producer != null) {</span>
+<span class="fc" id="L62">            return producer.produce(args);</span>
+        }
+
+<span class="nc" id="L65">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

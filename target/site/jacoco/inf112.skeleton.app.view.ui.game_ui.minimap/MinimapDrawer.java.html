@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MinimapDrawer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.view.ui.game_ui.minimap</a> &gt; <span class="el_source">MinimapDrawer.java</span></div><h1>MinimapDrawer.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.view.ui.game_ui.minimap;
+
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+
+import inf112.skeleton.app.model.entity.alien.Alien;
+import inf112.skeleton.app.model.entity.player.Player;
+import inf112.skeleton.app.model.entity.powerup.PowerUp;
+import inf112.skeleton.app.model.entity.Entity;
+import inf112.skeleton.app.view.Media;
+import inf112.skeleton.app.model.mapfactories.Map;
+import inf112.skeleton.app.model.mapfactories.Tile;
+import inf112.skeleton.app.model.mapfactories.TileType;
+
+
+/**
+ * This class is responsible for drawing a minimap representation of the game map.
+ * It uses various textures to represent different elements such as walls, floors, holes, and entities.
+ */
+public class MinimapDrawer {
+
+    private final Array&lt;Array&lt;Tile&gt;&gt; map;
+    private final int width;
+    private final int height;
+
+    private final Texture blackTexture;
+    private final Texture redTexture;
+    private final Texture grayTexture;
+    private final Texture greenTexture;
+
+    private final Texture wallTexture;
+    private final Texture holeTexture;
+
+    /**
+     * Constructs a new MinimapDrawer with the specified map.
+     *
+     * @param m the Map instance to draw the minimap for
+     */
+<span class="fc" id="L43">    public MinimapDrawer(Map m) {</span>
+<span class="fc" id="L44">        this.map = m.getTiles();</span>
+<span class="fc" id="L45">        this.width = m.getWidth();</span>
+<span class="fc" id="L46">        this.height = m.getHeight();</span>
+<span class="fc" id="L47">        this.blackTexture = Media.getTexture(&quot;black&quot;);</span>
+<span class="fc" id="L48">        this.redTexture = Media.getTexture(&quot;red&quot;);</span>
+<span class="fc" id="L49">        this.grayTexture = Media.getTexture(&quot;gray&quot;);</span>
+<span class="fc" id="L50">        this.greenTexture = Media.getTexture(&quot;green&quot;);</span>
+<span class="fc" id="L51">        this.wallTexture = Media.getTexture(&quot;wallTop&quot;);</span>
+<span class="fc" id="L52">        this.holeTexture = Media.getTexture(&quot;hole&quot;);</span>
+<span class="fc" id="L53">    }</span>
+
+    /**
+     * Draws the minimap on the screen using the provided SpriteBatch, camera settings, player position, and entity list.
+     * The minimap includes a representation of the map, player, and enemies.
+     *
+     * @param batch the SpriteBatch used for drawing the textures
+     * @param camera the OrthographicCamera that provides the current view settings
+     * @param playerpos the current position of the player in world coordinates, used as the center point of the minimap
+     * @param entites the Array of Entity instances currently active in the game
+     * @param size the size of the minimap in tiles
+     */
+    public void draw(SpriteBatch batch, OrthographicCamera camera, Vector2 playerpos, Array&lt;Entity&gt; entites, int size) {
+
+<span class="fc" id="L67">        float tileSize = 2f / size;</span>
+
+<span class="fc" id="L69">        float minimapX = camera.position.x + camera.zoom * camera.viewportWidth / 2f - size * tileSize;</span>
+<span class="fc" id="L70">        float minimapY = camera.position.y + camera.zoom * camera.viewportHeight / 2f - size * tileSize;</span>
+
+<span class="fc" id="L72">        int px = (int) playerpos.x;</span>
+<span class="fc" id="L73">        int py = (int) playerpos.y;</span>
+
+<span class="fc" id="L75">        float pxReal = camera.position.x;</span>
+<span class="fc" id="L76">        float pyReal = camera.position.y;</span>
+
+<span class="fc" id="L78">        minimapX = minimapX + (px - pxReal) * tileSize;</span>
+<span class="fc" id="L79">        minimapY = minimapY + (py - pyReal) * tileSize;</span>
+
+<span class="fc" id="L81">        int newsize = (int) (double) (size &gt;&gt; 1);</span>
+
+<span class="fc bfc" id="L83" title="All 2 branches covered.">        for (int row = py - newsize ; row &lt; py + newsize; row++) {</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">            for (int col = px - newsize; col &lt; px + newsize; col++) {</span>
+<span class="fc" id="L85">                int newRow = row - py + newsize;</span>
+<span class="fc" id="L86">                int newCol = col - px + newsize;</span>
+<span class="pc bpc" id="L87" title="4 of 8 branches missed.">                if (newRow &lt; 0 || newRow &gt;= size || newCol &lt; 0 || newCol &gt;= size) {</span>
+<span class="nc" id="L88">                    continue;</span>
+                }
+<span class="pc bpc" id="L90" title="2 of 8 branches missed.">                if (col &lt; 0 || row &lt; 0 || col &gt;= width || row &gt;= height) {</span>
+<span class="nc" id="L91">                    continue;</span>
+                }
+<span class="fc" id="L93">                TextureRegion textureRegion = new TextureRegion(getTileTexture(map.get(row).get(col).getTiletype()));</span>
+          
+<span class="fc" id="L95">                batch.draw(textureRegion, minimapX + newCol * tileSize, minimapY + newRow * tileSize, tileSize, tileSize);</span>
+            
+            }
+        }
+
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        for (Entity e : entites) {</span>
+<span class="fc" id="L101">            float row =  e.getPosition().y;</span>
+<span class="fc" id="L102">            float col =  e.getPosition().x;</span>
+<span class="pc bpc" id="L103" title="4 of 8 branches missed.">            if (col - px + newsize &lt; 0 || row - py + newsize &lt; 0 || col - px + newsize &gt;= size || row - py + newsize &gt;= size) {</span>
+<span class="nc" id="L104">                continue;</span>
+            }
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">            if (e instanceof Alien) {</span>
+<span class="nc" id="L107">                TextureRegion textureRegion = new TextureRegion(Media.redDot);</span>
+<span class="nc" id="L108">                batch.draw(textureRegion, minimapX + (col - px + newsize) * tileSize - tileSize / 2f, minimapY + (row - py + newsize) * tileSize - tileSize / 2f, tileSize, tileSize);</span>
+<span class="pc bpc" id="L109" title="1 of 2 branches missed.">            } else if (e instanceof Player) {</span>
+<span class="nc" id="L110">                TextureRegion textureRegion = new TextureRegion(Media.greenDot);</span>
+<span class="nc" id="L111">                batch.draw(textureRegion, minimapX + (col - px + newsize) * tileSize - tileSize / 2f, minimapY + (row - py + newsize) * tileSize - tileSize / 2f, tileSize, tileSize);</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">            } else if (e instanceof PowerUp) {</span>
+<span class="nc" id="L113">                TextureRegion textureRegion = new TextureRegion(e.getPrimaryTexture());</span>
+<span class="nc" id="L114">                batch.draw(textureRegion, minimapX + (col - px + newsize) * tileSize - tileSize / 2f, minimapY + (row - py + newsize) * tileSize - tileSize / 2f, tileSize, tileSize);</span>
+            }
+        }
+<span class="fc" id="L117">    }</span>
+
+    /**
+     * Returns the texture associated with the specified TileType.
+     *
+     * @param type the TileType to get the texture for
+     * @return the Texture associated with the TileType
+     */
+
+    private Texture getTileTexture(TileType type) {
+<span class="pc bpc" id="L127" title="2 of 5 branches missed.">        return switch (type) {</span>
+<span class="fc" id="L128">            case FLOOR, ENEMY_SPAWN, POWERUP_SPAWN -&gt; grayTexture;</span>
+<span class="nc" id="L129">            case PLAYER_SPAWN -&gt; greenTexture;</span>
+<span class="fc" id="L130">            case WALL -&gt; wallTexture;</span>
+<span class="nc" id="L131">            case HOLE -&gt; holeTexture;</span>
+<span class="fc" id="L132">            default -&gt; blackTexture;</span>
+        };
+    }
+
+    /**
+     * Disposes of the textures used by the minimap drawer.
+     */
+    public void dispose() {
+<span class="nc" id="L140">        blackTexture.dispose();</span>
+<span class="nc" id="L141">        redTexture.dispose();</span>
+<span class="nc" id="L142">        grayTexture.dispose();</span>
+<span class="nc" id="L143">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

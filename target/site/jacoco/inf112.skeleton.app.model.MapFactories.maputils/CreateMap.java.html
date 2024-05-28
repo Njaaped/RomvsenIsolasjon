@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CreateMap.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model.mapfactories.maputils</a> &gt; <span class="el_source">CreateMap.java</span></div><h1>CreateMap.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model.mapfactories.maputils;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Random;
+
+
+<span class="fc" id="L9">public class CreateMap {</span>
+
+
+    private final int[][] intmap;
+    private final int difficulty;
+    private final int WIDTH;
+    private final int HEIGHT;
+    private final Random rand;
+
+<span class="fc" id="L18">    private final int smallestRoomSize = 2;</span>
+
+    private boolean first;
+
+<span class="fc" id="L22">    public CreateMap(int width, int height, int seed, int difficulty) {</span>
+<span class="fc" id="L23">        this.WIDTH = width;</span>
+<span class="fc" id="L24">        this.HEIGHT = height;</span>
+<span class="fc" id="L25">        this.rand = new Random(seed);</span>
+<span class="fc" id="L26">        this.intmap = new int[HEIGHT][WIDTH];</span>
+<span class="fc" id="L27">        this.first = true;</span>
+<span class="fc" id="L28">        this.difficulty = difficulty;</span>
+<span class="fc" id="L29">        initializeMap();</span>
+<span class="fc" id="L30">    }</span>
+
+    /**
+     * Initializes the map with a random number of rooms
+     */
+
+    private void initializeMap() {
+<span class="fc" id="L37">        int threshold = 100;</span>
+<span class="fc" id="L38">        int count = 0;</span>
+        boolean added;
+<span class="fc bfc" id="L40" title="All 2 branches covered.">        while (count &lt; threshold) {</span>
+<span class="fc" id="L41">            int largestRoomSize = 4;</span>
+<span class="fc" id="L42">            added = addTiles(smallestRoomSize, largestRoomSize);</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">            if (added) {</span>
+<span class="fc" id="L44">                count = 0;</span>
+            } else {
+<span class="fc" id="L46">                count++;</span>
+            }
+<span class="fc" id="L48">        }</span>
+<span class="fc" id="L49">        int maxAttempts = 1000;</span>
+<span class="fc" id="L50">        int islands = countIslands();</span>
+<span class="fc" id="L51">        int attempt = 0;</span>
+<span class="pc bpc" id="L52" title="1 of 4 branches missed.">        while (islands &gt; 1 &amp;&amp; attempt &lt; maxAttempts) {</span>
+<span class="fc" id="L53">            islands = countIslands();</span>
+<span class="fc" id="L54">            attempt++;</span>
+        }
+<span class="fc" id="L56">        fillWalls();</span>
+<span class="fc" id="L57">        int[] spawnpos = createSpawn();</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (difficulty != 0) {</span>
+<span class="fc" id="L59">            attempt = 0;</span>
+<span class="pc bpc" id="L60" title="1 of 4 branches missed.">            while(!(hasAliens() &amp;&amp; attempt &lt; maxAttempts)) {</span>
+<span class="fc" id="L61">                addAliens(spawnpos, 0.03f * difficulty);</span>
+<span class="fc" id="L62">                attempt++;</span>
+            }
+        }
+
+<span class="fc" id="L66">        addStars(spawnpos, 0.015f);</span>
+<span class="fc" id="L67">    }</span>
+
+    /**
+     * Checks if the map has aliens
+     * @return true if the map has aliens, false otherwise
+     */
+    private boolean hasAliens() {
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        for (int i = 0; i &lt; HEIGHT; i++) {</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">            for (int j = 0; j &lt; WIDTH; j++) {</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">                if (intmap[i][j] == 8) {</span>
+<span class="fc" id="L77">                    return true;</span>
+                }
+            }
+        }
+<span class="fc" id="L81">        return false;</span>
+    }
+
+    /**
+     * Adds a random number of tiles to the map
+     * @param least the smallest room size
+     * @param most the largest room size
+     * @return true if a room was added, false otherwise
+     */
+    private boolean addTiles(int least, int most) {
+<span class="fc" id="L91">        int row = rand.nextInt(HEIGHT);</span>
+<span class="fc" id="L92">        int col = rand.nextInt(WIDTH);</span>
+<span class="fc" id="L93">        int roomSize = rand.nextInt(most - least) + least;</span>
+<span class="fc bfc" id="L94" title="All 4 branches covered.">        if (intmap[row][col] == 0 &amp;&amp; checkSurroundingTiles(row, col, roomSize)) {</span>
+<span class="fc" id="L95">            fillSurroundingTiles(row, col, roomSize);</span>
+<span class="fc" id="L96">            return true;</span>
+        }
+<span class="fc" id="L98">        return false;</span>
+    }
+
+    /**
+     * Checks if the surrounding tiles are empty, with +2 margin
+     * @param row current row
+     * @param col current col
+     * @param roomSize size of room
+     * @return True if surrounding tiles are empty, false if not
+     */
+    private boolean checkSurroundingTiles(int row, int col, int roomSize) {
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        for (int i = row - roomSize - 1; i &lt; row + roomSize + 1; i++) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            for (int j = col - roomSize - 1; j &lt; col + roomSize + 1; j++) {</span>
+<span class="fc bfc" id="L111" title="All 10 branches covered.">                if (i &gt;= HEIGHT || j &gt;= WIDTH || i &lt; 0 || j &lt; 0 || intmap[i][j] == 1) {</span>
+<span class="fc" id="L112">                    return false;</span>
+                }
+            }
+        }
+<span class="fc" id="L116">        return true;</span>
+    }
+
+    /**
+     * Fills the surrounding tiles with 1
+     * @param row current row
+     * @param col current column
+     * @param roomSize size of room
+     */
+    private void fillSurroundingTiles(int row, int col, int roomSize) {
+<span class="fc bfc" id="L126" title="All 2 branches covered.">        for (int i = row - roomSize; i &lt; row + roomSize; i++) {</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">            for (int j = col - roomSize; j &lt; col + roomSize; j++) {</span>
+<span class="fc" id="L128">                intmap[i][j] = 1;</span>
+            }
+        }
+<span class="fc" id="L131">    }</span>
+
+    /**
+     * Counts the number of islands in the map and connects the Islands
+     * @return the number of islands
+     */
+    public int countIslands() {
+<span class="fc" id="L138">        boolean[][] visited = new boolean[HEIGHT][WIDTH];</span>
+<span class="fc" id="L139">        int count = 0;</span>
+<span class="fc" id="L140">        int dist = 0;</span>
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        for (int row = 0; row &lt; HEIGHT; row++) {</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">            for (int col = 0; col &lt; WIDTH; col++) {</span>
+<span class="fc bfc" id="L143" title="All 4 branches covered.">                if (intmap[row][col] == 1 &amp;&amp; !visited[row][col]) {</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                    if (first) {</span>
+<span class="fc" id="L145">                        dfsSelectPointsInDifferentRooms(row, col, visited, dist);</span>
+                    } else {
+<span class="fc" id="L147">                        dfs(row, col, visited);</span>
+                    }
+<span class="fc" id="L149">                    count++;</span>
+<span class="fc" id="L150">                    connectToIsland(row, col, visited);</span>
+                }
+            }
+        }
+<span class="fc" id="L154">        first = false;</span>
+<span class="fc" id="L155">        return count;</span>
+    }
+
+
+    /**
+     * Connects the island to the closest island
+     * @param row current row
+     * @param col current column
+     * @param visited visited
+     */
+
+    private void connectToIsland(int row, int col, boolean[][] visited) {
+<span class="fc" id="L167">        int[] closestIsland = findClosestIsland(row, col, visited);</span>
+<span class="fc bfc" id="L168" title="All 2 branches covered.">        if (closestIsland != null) {</span>
+<span class="fc" id="L169">            createShortestPath(row, col, closestIsland[0], closestIsland[1]);</span>
+        }
+<span class="fc" id="L171">    }</span>
+
+    /**
+     * Finds the closest island to the given coordinates
+     * @param row current row
+     * @param col current column
+     * @param visited visited
+     * @return the coordinates of the closest island
+     */
+    private int[] findClosestIsland(int row, int col, boolean[][] visited) {
+<span class="fc" id="L181">        Queue&lt;int[]&gt; queue = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L182">        boolean[][] visitedCopy = new boolean[HEIGHT][WIDTH];</span>
+<span class="fc" id="L183">        queue.offer(new int[]{row, col});</span>
+<span class="fc" id="L184">        int[] directions = {0, 1, 0, -1, 1, 0, -1, 0};</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">        while (!queue.isEmpty()) {</span>
+<span class="fc" id="L186">            int[] current = queue.poll();</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">            for (int i = 0; i &lt; 8; i += 2) {</span>
+<span class="fc" id="L188">                int newRow = current[0] + directions[i];</span>
+<span class="fc" id="L189">                int newCol = current[1] + directions[i + 1];</span>
+<span class="fc bfc" id="L190" title="All 12 branches covered.">                if (newRow &gt;= 0 &amp;&amp; newRow &lt; HEIGHT &amp;&amp; newCol &gt;= 0 &amp;&amp; newCol &lt; WIDTH &amp;&amp; intmap[newRow][newCol] == 1 &amp;&amp; !visited[newRow][newCol]) {</span>
+<span class="fc" id="L191">                    return new int[]{newRow, newCol};</span>
+<span class="fc bfc" id="L192" title="All 12 branches covered.">                } else if (newRow &gt;= 0 &amp;&amp; newRow &lt; HEIGHT &amp;&amp; newCol &gt;= 0 &amp;&amp; newCol &lt; WIDTH &amp;&amp; intmap[newRow][newCol] != 2  &amp;&amp; !visitedCopy[newRow][newCol]) {</span>
+<span class="fc" id="L193">                    queue.offer(new int[]{newRow, newCol});</span>
+<span class="fc" id="L194">                    visitedCopy[newRow][newCol] = true;</span>
+                }
+            }
+<span class="fc" id="L197">        }</span>
+<span class="fc" id="L198">        return null;</span>
+    }
+
+    /**
+     * Creates the shortest path between two coordinates
+     * @param startRow starting row
+     * @param startCol start column
+     * @param endRow end row
+     * @param endCol end column
+     */
+    private void createShortestPath(int startRow, int startCol, int endRow, int endCol) {
+<span class="fc" id="L209">        List&lt;AStar.Node&gt; path = AStar.findPath(intmap, startRow, startCol, endRow, endCol, false);</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">        assert path != null;</span>
+<span class="fc bfc" id="L211" title="All 2 branches covered.">        for (AStar.Node node : path) {</span>
+<span class="fc" id="L212">            intmap[node.getRow()][node.getCol()] = 1;</span>
+<span class="fc" id="L213">        }</span>
+        
+<span class="fc" id="L215">    }</span>
+
+    /**
+     * Depth first search to find islands
+     * @param row this row
+     * @param col this column
+     * @param visited visited
+     */
+    private void dfs(int row, int col, boolean[][] visited) {
+<span class="pc bpc" id="L224" title="4 of 12 branches missed.">        if (row &lt; 0 || row &gt;= HEIGHT || col &lt; 0 || col &gt;= WIDTH || intmap[row][col] != 1 || visited[row][col]) {</span>
+<span class="fc" id="L225">            return;</span>
+        }
+<span class="fc" id="L227">        visited[row][col] = true;</span>
+<span class="fc" id="L228">        dfs(row + 1, col, visited);</span>
+<span class="fc" id="L229">        dfs(row - 1, col, visited);</span>
+<span class="fc" id="L230">        dfs(row, col + 1, visited);</span>
+<span class="fc" id="L231">        dfs(row, col - 1, visited);</span>
+<span class="fc" id="L232">    }</span>
+
+    /**
+     * Depth first search to find points in different rooms
+     * @param row this row
+     * @param col this column
+     * @param visited visited
+     * @param dist distance traveled
+     * @return distance
+     */
+    private int dfsSelectPointsInDifferentRooms(int row, int col, boolean[][] visited, int dist) {
+<span class="pc bpc" id="L243" title="4 of 12 branches missed.">        if (row &lt; 0 || row &gt;= HEIGHT || col &lt; 0 || col &gt;= WIDTH || intmap[row][col] == 0 || visited[row][col]) {</span>
+<span class="fc" id="L244">            return 0;</span>
+        }
+
+<span class="fc" id="L247">        visited[row][col] = true;</span>
+<span class="fc" id="L248">        int totalDist = 1;</span>
+<span class="fc" id="L249">        totalDist += dfsSelectPointsInDifferentRooms(row + 1, col, visited, dist + 1);</span>
+<span class="fc" id="L250">        totalDist += dfsSelectPointsInDifferentRooms(row - 1, col, visited, dist + 1);</span>
+<span class="fc" id="L251">        totalDist += dfsSelectPointsInDifferentRooms(row, col + 1, visited, dist + 1);</span>
+<span class="fc" id="L252">        totalDist += dfsSelectPointsInDifferentRooms(row, col - 1, visited, dist + 1);</span>
+<span class="fc" id="L253">        return totalDist;</span>
+    }
+
+
+    /**
+     * Fills the walls of the map by setting surrounding tiles of floor tiles to walls, including corners.
+     */
+    private void fillWalls() {
+<span class="fc bfc" id="L261" title="All 2 branches covered.">        for (int row = 0; row &lt; HEIGHT; row++) {</span>
+<span class="fc bfc" id="L262" title="All 2 branches covered.">            for (int col = 0; col &lt; WIDTH; col++) {</span>
+                // Check if current tile is floor
+<span class="fc bfc" id="L264" title="All 2 branches covered.">                if (intmap[row][col] == 0) {</span>
+                    // Check all eight surrounding tiles: up, down, left, right, and four corners
+<span class="fc bfc" id="L266" title="All 40 branches covered.">                    if ((row &gt; 0 &amp;&amp; intmap[row - 1][col] == 1) ||</span>
+                            (row &lt; HEIGHT - 1 &amp;&amp; intmap[row + 1][col] == 1) ||
+                            (col &gt; 0 &amp;&amp; intmap[row][col - 1] == 1) ||
+                            (col &lt; WIDTH - 1 &amp;&amp; intmap[row][col + 1] == 1) ||
+                            (row &gt; 0 &amp;&amp; col &gt; 0 &amp;&amp; intmap[row - 1][col - 1] == 1) ||
+                            (row &gt; 0 &amp;&amp; col &lt; WIDTH - 1 &amp;&amp; intmap[row - 1][col + 1] == 1) ||
+                            (row &lt; HEIGHT - 1 &amp;&amp; col &gt; 0 &amp;&amp; intmap[row + 1][col - 1] == 1) ||
+                            (row &lt; HEIGHT - 1 &amp;&amp; col &lt; WIDTH - 1 &amp;&amp; intmap[row + 1][col + 1] == 1)) {
+                        // Set the current tile to wall
+<span class="fc" id="L275">                        intmap[row][col] = 2;</span>
+                    }
+                }
+            }
+        }
+<span class="fc" id="L280">    }</span>
+
+
+
+    /**
+     * Creates a spawn point
+     */
+    private int[] createSpawn() {
+<span class="fc" id="L288">        int row = rand.nextInt(HEIGHT);</span>
+<span class="fc" id="L289">        int col = rand.nextInt(WIDTH);</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">        while (intmap[row][col] != 1) {</span>
+<span class="fc" id="L291">            row = rand.nextInt(HEIGHT);</span>
+<span class="fc" id="L292">            col = rand.nextInt(WIDTH);</span>
+        }
+<span class="fc" id="L294">        intmap[row][col] = 9;</span>
+<span class="fc" id="L295">        return new int[]{row, col};</span>
+    }
+
+    /**
+     * Adds aliens to the map
+     */
+     private void addAliens(int[] spawnpos, float spawnChance) {
+<span class="fc" id="L302">        int[][] directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};</span>
+<span class="fc" id="L303">        int[][] visited = new int[HEIGHT][WIDTH];</span>
+<span class="fc" id="L304">        Queue&lt;int[]&gt; queue = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L305">        queue.offer(spawnpos);</span>
+<span class="fc" id="L306">        visited[spawnpos[0]][spawnpos[1]] = 1;</span>
+<span class="fc bfc" id="L307" title="All 2 branches covered.">        for (int row = spawnpos[0] - 10; row &lt; spawnpos[0] + 10; row++) {</span>
+<span class="fc bfc" id="L308" title="All 2 branches covered.">            for (int col = spawnpos[1] - 10; col &lt; spawnpos[1] + 10; col++) {</span>
+<span class="fc bfc" id="L309" title="All 10 branches covered.">                if (row &gt;= 0 &amp;&amp; row &lt; HEIGHT &amp;&amp; col &gt;= 0 &amp;&amp; col &lt; WIDTH &amp;&amp; intmap[row][col] == 1) {</span>
+<span class="fc" id="L310">                    visited[row][col] = 1;</span>
+<span class="fc" id="L311">                    queue.offer(new int[]{row, col});</span>
+                }
+            }
+        }
+
+<span class="fc bfc" id="L316" title="All 2 branches covered.">        while (!queue.isEmpty()) {</span>
+<span class="fc" id="L317">            int[] current = queue.poll();</span>
+<span class="fc bfc" id="L318" title="All 2 branches covered.">            for (int i = 0; i &lt; 4; i++) {</span>
+<span class="fc" id="L319">                int newRow = current[0] + directions[i][0];</span>
+<span class="fc" id="L320">                int newCol = current[1] + directions[i][1];</span>
+<span class="pc bpc" id="L321" title="4 of 12 branches missed.">                if (newRow &gt;= 0 &amp;&amp; newRow &lt; HEIGHT &amp;&amp; newCol &gt;= 0 &amp;&amp; newCol &lt; WIDTH &amp;&amp; intmap[newRow][newCol] == 1 &amp;&amp; visited[newRow][newCol] == 0) {</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">                    if (rand.nextFloat() &lt; spawnChance) {</span>
+<span class="fc" id="L323">                        intmap[newRow][newCol] = 8;</span>
+                    }
+<span class="fc" id="L325">                    visited[newRow][newCol] = 1;</span>
+<span class="fc" id="L326">                    queue.offer(new int[]{newRow, newCol});</span>
+                    }
+                }
+<span class="fc" id="L329">            }</span>
+<span class="fc" id="L330">        }</span>
+
+
+    /**
+    * adds stars to the map
+
+    */
+    private void addStars(int[] spawnpos, float spawnChance) {
+<span class="fc" id="L338">    int[][] directions = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};</span>
+<span class="fc" id="L339">    int[][] visited = new int[HEIGHT][WIDTH];</span>
+<span class="fc" id="L340">    Queue&lt;int[]&gt; queue = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L341">    queue.offer(spawnpos);</span>
+<span class="fc" id="L342">    visited[spawnpos[0]][spawnpos[1]] = 1;</span>
+
+<span class="fc bfc" id="L344" title="All 2 branches covered.">    while (!queue.isEmpty()) {</span>
+<span class="fc" id="L345">        int[] current = queue.poll();</span>
+<span class="fc bfc" id="L346" title="All 2 branches covered.">        for (int i = 0; i &lt; 4; i++) {</span>
+<span class="fc" id="L347">            int newRow = current[0] + directions[i][0];</span>
+<span class="fc" id="L348">            int newCol = current[1] + directions[i][1];</span>
+<span class="pc bpc" id="L349" title="4 of 12 branches missed.">            if (newRow &gt;= 0 &amp;&amp; newRow &lt; HEIGHT &amp;&amp; newCol &gt;= 0 &amp;&amp; newCol &lt; WIDTH &amp;&amp; intmap[newRow][newCol] == 1 &amp;&amp; visited[newRow][newCol] == 0) {</span>
+<span class="fc bfc" id="L350" title="All 2 branches covered.">                if (rand.nextFloat() &lt; spawnChance) {</span>
+<span class="fc" id="L351">                    intmap[newRow][newCol] = 7;</span>
+                }
+<span class="fc" id="L353">                visited[newRow][newCol] = 1;</span>
+<span class="fc" id="L354">                queue.offer(new int[]{newRow, newCol});</span>
+                }
+            }
+<span class="fc" id="L357">        }</span>
+<span class="fc" id="L358">    }</span>
+
+
+    /**
+     * Returns the integer map
+     * @return integer map
+     */
+    public int[][] getIntmap() {
+<span class="fc" id="L366">        return intmap;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

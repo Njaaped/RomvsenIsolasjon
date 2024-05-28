@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">gdx-app</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.controller</a> &gt; <span class="el_source">GameController.java</span></div><h1>GameController.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.controller;
+
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.utils.Disposable;
+
+import inf112.skeleton.app.model.GameModel;
+import inf112.skeleton.app.model.gamestate.GameState;
+
+public class GameController extends InputAdapter implements Disposable {
+<span class="fc" id="L11">  private final int TICKS_PER_SECOND = 50;</span>
+  
+  private ControllableModel model;
+  private GameLoop gameLoop;
+
+  private boolean up;
+  private boolean down;
+  private boolean left;
+  private boolean right;
+
+  private boolean sup;
+  private boolean sdown;
+  private boolean sleft;
+  private boolean sright;
+
+
+<span class="fc" id="L27">  public GameController(ControllableModel model) {</span>
+<span class="fc" id="L28">    this.model = model;</span>
+<span class="fc" id="L29">    float intervalSeconds = 1f / TICKS_PER_SECOND;</span>
+<span class="fc" id="L30">    this.gameLoop = new GameLoop(model, intervalSeconds);</span>
+<span class="fc" id="L31">    gameLoop.start();</span>
+
+<span class="fc" id="L33">  }</span>
+
+  
+  @Override
+  public boolean keyDown(int keycode) {
+<span class="fc" id="L38">    return handleKeyPress(keycode, true);</span>
+  }
+  
+  @Override
+  public boolean keyUp(int keycode) {
+<span class="nc" id="L43">    return handleKeyPress(keycode, false);</span>
+  }
+
+  private boolean handleKeyPress(int keycode, boolean keyDown) {
+
+<span class="pc bpc" id="L48" title="8 of 9 branches missed.">    switch (keycode) {</span>
+      case Input.Keys.S,
+      Input.Keys.W,
+      Input.Keys.A,
+<span class="fc" id="L52">      Input.Keys.D -&gt; {handleMovementKeys(keycode, keyDown);}</span>
+      case Input.Keys.UP,
+      Input.Keys.DOWN,
+      Input.Keys.LEFT,
+<span class="nc" id="L56">      Input.Keys.RIGHT-&gt; {handleAttackKeys(keycode, keyDown);}</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">      case Input.Keys.BACKSPACE -&gt; {if (keyDown) {model.toggleDebug();}}</span>
+<span class="nc" id="L58">      case Input.Keys.SHIFT_LEFT -&gt; {model.isSprinting(keyDown);}</span>
+      //case Input.Keys.SPACE -&gt; {if (keyDown) model.fireWeapon(Gdx.input.getX(), Gdx.input.getY(), camera);}
+<span class="nc" id="L60">      case Input.Keys.SPACE -&gt; {model.setAttacking(keyDown);}</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">      case Input.Keys.P -&gt; {if (keyDown) {model.pauseGame();}}</span>
+<span class="nc bnc" id="L62" title="All 2 branches missed.">      case Input.Keys.O -&gt; {if (keyDown) {model.gameOver();}}</span>
+<span class="nc bnc" id="L63" title="All 4 branches missed.">      case Input.Keys.ENTER -&gt; {if (keyDown &amp;&amp; GameModel.state == GameState.GAME_OVER ) {model.restartGame();}}</span>
+
+      default -&gt; {
+<span class="nc" id="L66">        return false;</span>
+      }
+    }
+<span class="fc" id="L69">    return true;</span>
+  }
+
+  private void handleAttackKeys(int keycode, boolean keyDown) {
+<span class="nc bnc" id="L73" title="All 5 branches missed.">    switch (keycode) {</span>
+<span class="nc" id="L74">      case Input.Keys.DOWN -&gt; sdown = keyDown;</span>
+<span class="nc" id="L75">      case Input.Keys.UP -&gt; sup = keyDown;</span>
+<span class="nc" id="L76">      case Input.Keys.LEFT -&gt; sleft = keyDown;</span>
+<span class="nc" id="L77">      case Input.Keys.RIGHT -&gt; sright = keyDown;</span>
+    }
+
+<span class="nc bnc" id="L80" title="All 4 branches missed.">    int x = (sright ? 1:0) - (sleft ? 1:0);</span>
+<span class="nc bnc" id="L81" title="All 4 branches missed.">    int y = (sup ? 1:0) - (sdown ? 1:0);</span>
+<span class="nc" id="L82">    model.attackDirection(x, y);</span>
+<span class="nc" id="L83">  }</span>
+
+  private void handleMovementKeys(int keycode, boolean keyDown) {
+<span class="pc bpc" id="L86" title="1 of 5 branches missed.">    switch (keycode) {</span>
+<span class="fc" id="L87">      case Input.Keys.S -&gt; down = keyDown;</span>
+<span class="fc" id="L88">      case Input.Keys.W -&gt; up = keyDown;</span>
+<span class="fc" id="L89">      case Input.Keys.A -&gt; left = keyDown;</span>
+<span class="fc" id="L90">      case Input.Keys.D -&gt; right = keyDown;</span>
+    }
+
+<span class="fc bfc" id="L93" title="All 4 branches covered.">    int x = (right ? 1:0) - (left ? 1:0);</span>
+<span class="fc bfc" id="L94" title="All 4 branches covered.">    int y = (up ? 1:0) - (down ? 1:0);</span>
+<span class="fc" id="L95">    model.moveDirection(x, y);</span>
+<span class="fc" id="L96">  }</span>
+
+  @Override
+  public void dispose() {
+<span class="nc" id="L100">    gameLoop.dispose();</span>
+<span class="nc" id="L101">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

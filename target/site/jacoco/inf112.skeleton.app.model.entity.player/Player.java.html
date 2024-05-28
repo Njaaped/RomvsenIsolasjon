@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Player.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model.entity.player</a> &gt; <span class="el_source">Player.java</span></div><h1>Player.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model.entity.player;
+
+
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+
+import inf112.skeleton.app.model.entity.Entity;
+import inf112.skeleton.app.model.entity.Interactable;
+import inf112.skeleton.app.model.entity.alien.Alien;
+import inf112.skeleton.app.model.entity.health.Health;
+import inf112.skeleton.app.model.entity.powerup.PowerUpAble;
+import inf112.skeleton.app.model.entity.powerup.effects.PowerUpEffect;
+import inf112.skeleton.app.model.entity.weapon.Weapon;
+import inf112.skeleton.app.model.entity.weapon.weapons.Gun;
+import inf112.skeleton.app.model.box2d.BodyFactory;
+import inf112.skeleton.app.model.box2d.Box2DWorldStatic;
+import inf112.skeleton.app.view.Media;
+import inf112.skeleton.app.model.entity.weapon.Cooldown;
+
+
+public class Player extends Entity implements Interactable, PowerUpAble {
+    private static final float DEFAULT_SPEED = 5;
+    private static final float WIDTH = 1;
+    private static final float HEIGHT = 1;
+<span class="fc" id="L30">    private Vector2 movementDirection = Vector2.Zero;</span>
+    private float speed;
+<span class="fc" id="L32">    private boolean attacking = false;</span>
+<span class="fc" id="L33">    private Vector2 attackDirection = Vector2.Zero;</span>
+    private Weapon weapon;
+    private Queue&lt;PowerUpEffect&gt; powerUps;
+
+
+    public Player(Vector2 position) {
+<span class="fc" id="L39">        super(</span>
+<span class="fc" id="L40">            position,</span>
+<span class="fc" id="L41">            WIDTH,</span>
+<span class="fc" id="L42">            HEIGHT,</span>
+<span class="fc" id="L43">            BodyFactory.createPhysicalBodyRound(WIDTH/2, HEIGHT/2, position, BodyDef.BodyType.DynamicBody),</span>
+<span class="fc" id="L44">            null,</span>
+<span class="fc" id="L45">            Media.player</span>
+        );
+<span class="fc" id="L47">        Box2DWorldStatic.addEntity(this.hashCode(), this);</span>
+<span class="fc" id="L48">        this.speed = DEFAULT_SPEED;</span>
+<span class="fc" id="L49">        this.health = new Health(100);</span>
+<span class="fc" id="L50">        this.weapon = new Gun(this.physicalBody, this.getClass());</span>
+<span class="fc" id="L51">        this.powerUps = new ConcurrentLinkedQueue&lt;&gt;();</span>
+
+<span class="fc" id="L53">    }</span>
+
+    @Override
+    public void update(float deltaTime) {
+
+<span class="fc" id="L58">        updatePowerUps(deltaTime);</span>
+
+<span class="fc" id="L60">        this.physicalBody.setLinearVelocity(movementDirection.cpy().scl(speed));</span>
+
+<span class="fc bfc" id="L62" title="All 2 branches covered.">        if (attacking) {</span>
+<span class="fc" id="L63">            weapon.attack(attackDirection.cpy());</span>
+        }
+
+<span class="pc bpc" id="L66" title="1 of 2 branches missed.">        if (weapon instanceof Cooldown cooldownWeapon) {</span>
+<span class="fc" id="L67">            cooldownWeapon.reduceCooldown();</span>
+        }
+
+<span class="fc" id="L70">    }</span>
+
+    private void updatePowerUps(float deltaTime) {
+<span class="fc" id="L73">        Set&lt;Class&lt;?&gt;&gt; powerUpsToSkip = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        for (PowerUpEffect powerUp : powerUps) {</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">            if (powerUpsToSkip.contains(powerUp.getClass())) {</span>
+<span class="nc" id="L76">                continue;</span>
+            }
+<span class="fc" id="L78">            powerUp.update(this, deltaTime);</span>
+<span class="fc" id="L79">            powerUpsToSkip.add(powerUp.getClass());</span>
+        }
+<span class="fc" id="L81">    }  </span>
+
+    /**
+     * Sets the movement direction of the player
+     * @param direction
+     */
+
+    public void setMovementDirection(Vector2 direction) {
+<span class="fc" id="L89">        this.movementDirection = direction.nor();</span>
+<span class="fc" id="L90">    }</span>
+
+    /**
+     * Returns the movement direction of the player
+     * @return
+     */
+    
+    public Vector2 getMovementDirection() {
+<span class="fc" id="L98">        return this.movementDirection;</span>
+    }
+
+    /**
+     * resets the speed of the player
+     */
+    public void resetSpeed() {
+<span class="nc" id="L105">        this.speed = DEFAULT_SPEED;</span>
+<span class="nc" id="L106">    }</span>
+
+    /**
+     * Increases the speed of the player
+     * @param amount the amount to increase the speed by
+     */
+
+    public void changeSpeed(float amount) {
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">        if (imunity) {</span>
+<span class="fc" id="L115">            return;</span>
+        }
+<span class="nc" id="L117">        this.speed = DEFAULT_SPEED * amount;</span>
+<span class="nc" id="L118">    }</span>
+
+    /**
+     * Returns the speed of the player
+     * @return the speed of the player
+     */
+
+    public float getSpeed(){
+<span class="fc" id="L126">        return this.speed;</span>
+    }
+
+    /**
+     * Sets the player to sprinting
+     * @param sprinting
+     */
+
+    public void setSprintState(boolean sprinting) {
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">        if (imunity) {</span>
+<span class="nc" id="L136">            return;</span>
+        }
+<span class="fc bfc" id="L138" title="All 2 branches covered.">        this.speed = sprinting ? DEFAULT_SPEED * 2 : DEFAULT_SPEED;</span>
+<span class="fc" id="L139">    }</span>
+
+    /**
+     * Sets the player to attacking
+     * @param b
+     * @param v
+     */
+
+    public void setAttacking(boolean b, Vector2 v) {
+<span class="fc" id="L148">        this.attacking = b;</span>
+<span class="fc" id="L149">        this.attackDirection = v;</span>
+<span class="fc" id="L150">        return;</span>
+    }
+
+    /**
+     * Returns the weapon of the player
+     */
+    public void setWeapon(Weapon weapon) {
+<span class="fc" id="L157">        this.weapon = weapon;</span>
+<span class="fc" id="L158">    }</span>
+
+    /**
+     *  gets the weapon
+     * @return the weapon
+     */
+    public Weapon getWeapon() {
+<span class="fc" id="L165">        return this.weapon;</span>
+    }
+
+    @Override
+    public void addPowerUp(PowerUpEffect powerUp) {
+<span class="fc" id="L170">        powerUps.add(powerUp);</span>
+<span class="fc" id="L171">        powerUp.activate(this);</span>
+<span class="fc" id="L172">    }</span>
+
+    
+    @Override
+    public void removePowerUp(PowerUpEffect powerUp) {
+<span class="fc" id="L177">        powerUps.remove(powerUp);</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        for (PowerUpEffect p : powerUps) {</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">            if (p.getClass().equals(powerUp.getClass())) {</span>
+<span class="nc" id="L180">                return;</span>
+            }
+        }
+<span class="fc" id="L183">        powerUp.deactivate(this);</span>
+<span class="fc" id="L184">    }</span>
+
+    @Override
+    public void interact(Interactable target, boolean isStart) {
+<span class="fc bfc" id="L188" title="All 2 branches covered.">        if (target instanceof Alien) {</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">            if (imunity) {</span>
+<span class="fc" id="L190">                Alien alien = (Alien) target;</span>
+<span class="fc" id="L191">                alien.defeated();</span>
+            }
+        }
+<span class="fc" id="L194">    }</span>
+
+    @Override
+    public Class&lt;?&gt; getOwnerType() {
+<span class="fc" id="L198">        return this.getClass();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

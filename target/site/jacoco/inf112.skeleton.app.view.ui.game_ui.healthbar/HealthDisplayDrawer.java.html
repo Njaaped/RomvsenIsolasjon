@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HealthDisplayDrawer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.view.ui.game_ui.healthbar</a> &gt; <span class="el_source">HealthDisplayDrawer.java</span></div><h1>HealthDisplayDrawer.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.view.ui.game_ui.healthbar;
+
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import inf112.skeleton.app.view.Media;
+
+public class HealthDisplayDrawer {
+    private final float width;
+    private final float height;
+
+<span class="fc" id="L12">    public HealthDisplayDrawer(float width, float height) {</span>
+<span class="fc" id="L13">        this.width = width;</span>
+<span class="fc" id="L14">        this.height = height;</span>
+<span class="fc" id="L15">    }</span>
+
+    public void draw(SpriteBatch batch, OrthographicCamera camera, float healthPercentage) {
+
+<span class="pc bpc" id="L19" title="1 of 2 branches missed.">        if (healthPercentage &lt; 0) {</span>
+<span class="nc" id="L20">            healthPercentage = 0;</span>
+<span class="pc bpc" id="L21" title="1 of 2 branches missed.">        } else if (healthPercentage &gt; 1) {</span>
+<span class="nc" id="L22">            healthPercentage = 1;</span>
+        }
+
+<span class="fc" id="L25">        float cameraX = camera.position.x - camera.zoom * camera.viewportWidth / 2 + 0.25f;</span>
+<span class="fc" id="L26">        float cameraY = camera.position.y - camera.zoom * camera.viewportHeight / 2 + 0.25f;</span>
+
+<span class="fc" id="L28">        TextureRegion backFace = new TextureRegion(Media.gray);</span>
+<span class="fc" id="L29">        TextureRegion health = new TextureRegion(Media.green);</span>
+
+<span class="fc" id="L31">        batch.draw(backFace, cameraX, cameraY, this.width, this.height);</span>
+<span class="fc" id="L32">        float healthWidth = this.width * 0.92f * healthPercentage;</span>
+<span class="fc" id="L33">        batch.draw(health, cameraX + this.width * 0.04f, cameraY + this.height * 0.1f, healthWidth, this.height * 0.8f);</span>
+<span class="fc" id="L34">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: inf112.skeleton.app.model.mapfactory.maputils.MapCreationTests
+-------------------------------------------------------------------------------
+Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.039 s -- in inf112.skeleton.app.model.mapfactory.maputils.MapCreationTests

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LevelUpDrawer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.view.ui.game_ui.level</a> &gt; <span class="el_source">LevelUpDrawer.java</span></div><h1>LevelUpDrawer.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.view.ui.game_ui.level;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+public class LevelUpDrawer {
+<span class="fc" id="L9">    private final Texture[] digitTextures = new Texture[10];</span>
+    private final Texture levelLabelTexture;
+
+<span class="fc" id="L12">    public LevelUpDrawer() {</span>
+<span class="fc bfc" id="L13" title="All 2 branches covered.">        for (int i = 0; i &lt; 10; i++) {</span>
+<span class="fc" id="L14">            digitTextures[i] = new Texture(Gdx.files.internal(&quot;fonts/ole_font/&quot; + i + &quot;.png&quot;));</span>
+        }
+<span class="fc" id="L16">        levelLabelTexture = new Texture(Gdx.files.internal(&quot;fonts/ole_font/&quot; + &quot;Level.png&quot;));</span>
+<span class="fc" id="L17">    }</span>
+
+    public void draw(SpriteBatch batch, OrthographicCamera camera, int level) {
+<span class="fc" id="L20">        int width = Gdx.graphics.getWidth();</span>
+<span class="fc" id="L21">        int height = Gdx.graphics.getHeight();</span>
+
+<span class="fc" id="L23">        String levelStr = String.valueOf(level);</span>
+<span class="fc" id="L24">        float offsetX = (float) width / 5;  // Label width</span>
+<span class="fc" id="L25">        float digitWidth = (float) width / 25;</span>
+
+
+<span class="fc" id="L28">        float levelX = (float) width / 2 - offsetX / 2 - levelStr.length() * digitWidth;</span>
+<span class="fc" id="L29">        float levelY = (float) height / 2;</span>
+
+<span class="fc" id="L31">        batch.draw(levelLabelTexture, levelX, levelY, (float) width / 5, (float) height / 10);</span>
+
+<span class="fc bfc" id="L33" title="All 2 branches covered.">        for (char digit : levelStr.toCharArray()) {</span>
+<span class="fc" id="L34">            batch.draw(digitTextures[Character.getNumericValue(digit)], levelX + offsetX, levelY, (float) width / 10, (float) height / 10);</span>
+<span class="fc" id="L35">            offsetX += digitWidth + 2 * digitWidth / 3;</span>
+        }
+<span class="fc" id="L37">    }</span>
+
+    public void dispose() {
+<span class="nc bnc" id="L40" title="All 2 branches missed.">        for (Texture texture : digitTextures) {</span>
+<span class="nc" id="L41">            texture.dispose();</span>
+        }
+<span class="nc" id="L43">        levelLabelTexture.dispose();</span>
+<span class="nc" id="L44">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

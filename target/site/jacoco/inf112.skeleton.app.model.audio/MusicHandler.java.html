@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MusicHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model.audio</a> &gt; <span class="el_source">MusicHandler.java</span></div><h1>MusicHandler.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model.audio;
+
+import com.badlogic.gdx.audio.Music;
+import inf112.skeleton.app.event.Event;
+import inf112.skeleton.app.event.GlobalEventBus;
+import inf112.skeleton.app.event.IEventBus;
+
+public class MusicHandler {
+  Music currentMusic;
+<span class="fc" id="L10">  public MusicHandler() {</span>
+<span class="fc" id="L11">    IEventBus eventBus = GlobalEventBus.getInstance(3);</span>
+<span class="fc" id="L12">    eventBus.on(&quot;PlayMusic&quot;, this::playMusic);</span>
+<span class="fc" id="L13">    eventBus.on(&quot;StopMusic&quot;, this::stopMusic);</span>
+<span class="fc" id="L14">  }</span>
+
+  private void playMusic(Event event) {
+<span class="nc bnc" id="L17" title="All 2 branches missed.">    if (currentMusic != null) {</span>
+<span class="nc" id="L18">      currentMusic.stop();</span>
+<span class="nc" id="L19">      currentMusic.dispose();</span>
+    }
+<span class="nc bnc" id="L21" title="All 2 branches missed.">    if (event instanceof MusicEvent musicEvent) {</span>
+<span class="nc" id="L22">      currentMusic = musicEvent.getMusic();</span>
+<span class="nc" id="L23">      currentMusic.setLooping(true);</span>
+<span class="nc" id="L24">      currentMusic.setVolume(0.2f);</span>
+<span class="nc" id="L25">      currentMusic.play();</span>
+    }
+<span class="nc" id="L27">  }</span>
+
+  private void stopMusic(Event event) {
+<span class="nc bnc" id="L30" title="All 2 branches missed.">    if (currentMusic != null) {</span>
+<span class="nc" id="L31">      currentMusic.stop();</span>
+<span class="nc" id="L32">      currentMusic.dispose();</span>
+    }
+<span class="nc" id="L34">  }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

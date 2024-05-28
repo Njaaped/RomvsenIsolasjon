@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tile.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model.mapfactories</a> &gt; <span class="el_source">Tile.java</span></div><h1>Tile.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model.mapfactories;
+
+import com.badlogic.gdx.graphics.Texture;
+import inf112.skeleton.app.model.entity.Interactable;
+import inf112.skeleton.app.view.Media;
+
+import java.util.Random;
+
+public class Tile implements Interactable {
+    private TileType tiletype;
+    private Texture primaryTexture;
+    private Texture secondaryTexture;
+
+<span class="fc" id="L14">    public Tile(TileType type) {</span>
+<span class="fc" id="L15">        this.secondaryTexture = Media.space5;</span>
+<span class="fc" id="L16">        this.tiletype = type;</span>
+<span class="fc" id="L17">    }</span>
+
+    public Texture getSecondaryTexture() {
+<span class="fc" id="L20">        return secondaryTexture;</span>
+    }
+
+    public void setSecondaryTexture(Texture secondaryTexture) {
+<span class="nc" id="L24">        this.secondaryTexture = secondaryTexture;</span>
+<span class="nc" id="L25">    }</span>
+
+    public TileType getTiletype() {
+<span class="fc" id="L28">        return tiletype;</span>
+    }
+
+    public void setTiletype(TileType tiletype) {
+<span class="nc" id="L32">        this.tiletype = tiletype;</span>
+<span class="nc" id="L33">    }</span>
+
+    public Texture getPrimaryTexture() {
+<span class="fc" id="L36">        return primaryTexture;</span>
+    }
+
+    public void setPrimaryTexture(Texture texture) {
+<span class="fc" id="L40">        this.primaryTexture = texture;</span>
+<span class="fc" id="L41">    }</span>
+
+    @Override
+    public void interact(Interactable target, boolean isStart) {
+<span class="fc" id="L45">    }</span>
+
+    @Override
+    public Class&lt;?&gt; getOwnerType() {
+<span class="fc" id="L49">        return this.getClass();</span>
+    }
+
+    public String getWallType(int[][] neighbours) {
+<span class="fc" id="L53">        StringBuilder type = new StringBuilder();</span>
+
+        // Simple directional checks
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if (isFloor(neighbours[1][0])) type.append(&quot;E&quot;); // East</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">        if (isFloor(neighbours[1][2])) type.append(&quot;W&quot;); // West</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">        if (isFloor(neighbours[0][1])) type.append(&quot;N&quot;); // North</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        if (isFloor(neighbours[2][1])) type.append(&quot;S&quot;); // South</span>
+
+<span class="fc bfc" id="L61" title="All 4 branches covered.">        if (type.length() == 1 || type.toString().equals(&quot;NS&quot;)) {</span>
+<span class="fc bfc" id="L62" title="All 4 branches covered.">            if (type.toString().equals(&quot;N&quot;) || type.toString().equals(&quot;NS&quot;)) {</span>
+<span class="fc" id="L63">                Random rand = new Random();</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">                if (rand.nextInt(100) &lt; 20) return &quot;N3&quot;;</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">                else if (rand.nextInt(100) &lt; 20) return &quot;N2&quot;;</span>
+<span class="fc" id="L66">                else return &quot;N1&quot;;</span>
+            }
+<span class="fc" id="L68">            else return type.toString();</span>
+        }
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (type.toString().equals(&quot;EW&quot;)) return &quot;EW&quot;;</span>
+        // Check for inside corners
+<span class="fc bfc" id="L72" title="All 4 branches covered.">        if (isFloor(neighbours[0][1]) &amp;&amp; isFloor(neighbours[1][0])) return &quot;SEI&quot;; // North-West Inside</span>
+<span class="pc bpc" id="L73" title="1 of 4 branches missed.">        if (isFloor(neighbours[0][1]) &amp;&amp; isFloor(neighbours[1][2])) return &quot;SWI&quot;; // North-East Inside</span>
+<span class="fc bfc" id="L74" title="All 4 branches covered.">        if (isFloor(neighbours[2][1]) &amp;&amp; isFloor(neighbours[1][0])) return &quot;NEI&quot;; // South-West Inside</span>
+<span class="pc bpc" id="L75" title="1 of 4 branches missed.">        if (isFloor(neighbours[2][1]) &amp;&amp; isFloor(neighbours[1][2])) return &quot;NWI&quot;; // South-East Inside</span>
+
+        // Check for outside corners
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if (isFloor(neighbours[0][0])) return &quot;NWO&quot;; // North-West Outside</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (isFloor(neighbours[0][2])) return &quot;NEO&quot;; // North-East Outside</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        if (isFloor(neighbours[2][0])) return &quot;SWO&quot;; // South-West Outside</span>
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        if (isFloor(neighbours[2][2])) return &quot;SEO&quot;; // South-East Outside</span>
+
+<span class="nc" id="L83">        return type.toString();</span>
+    }
+
+    private boolean isFloor(int tileValue) {
+<span class="fc bfc" id="L87" title="All 8 branches covered.">        return tileValue == 1 || tileValue == 7 || tileValue == 8 || tileValue == 9;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

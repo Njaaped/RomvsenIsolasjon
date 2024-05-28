@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EventEmitter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.event</a> &gt; <span class="el_source">EventEmitter.java</span></div><h1>EventEmitter.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.event;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+public class EventEmitter implements IEventBus {
+    // A map with keys being name of events and value being a list of all the listeners to that event
+    private HashMap&lt;String, List&lt;EventListener&gt;&gt; eventListeners;
+
+    public EventEmitter() {
+<span class="fc" id="L13">        this(new HashMap&lt;&gt;());</span>
+<span class="fc" id="L14">    }</span>
+
+<span class="fc" id="L16">    protected EventEmitter(HashMap&lt;String, List&lt;EventListener&gt;&gt; eventListeners) {</span>
+<span class="fc" id="L17">        this.eventListeners = eventListeners; </span>
+<span class="fc" id="L18">    }</span>
+
+    @Override
+    public void on(String eventName, EventListener listener) {
+<span class="fc" id="L22">        List&lt;EventListener&gt; listeners = eventListeners.getOrDefault(eventName, Collections.synchronizedList(new ArrayList&lt;EventListener&gt;()));</span>
+<span class="fc" id="L23">        listeners.add(listener);</span>
+
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        if (!eventListeners.containsKey(eventName)) {</span>
+<span class="fc" id="L26">            eventListeners.put(eventName, listeners);</span>
+        }
+<span class="fc" id="L28">    }</span>
+
+    @Override
+    public void trigger(String eventName, Event event) {
+<span class="fc" id="L32">        List&lt;EventListener&gt; listeners = eventListeners.getOrDefault(eventName, null);</span>
+
+<span class="fc bfc" id="L34" title="All 2 branches covered.">        if (listeners == null) {</span>
+<span class="fc" id="L35">            return;</span>
+        }
+
+<span class="fc bfc" id="L38" title="All 2 branches covered.">        for (EventListener listener : listeners) {</span>
+<span class="fc" id="L39">            listener.callback(event);</span>
+<span class="fc" id="L40">        }</span>
+<span class="fc" id="L41">    }</span>
+
+    @Override
+    public void remove(String eventName, EventListener listener) {
+<span class="fc" id="L45">        List&lt;EventListener&gt; listeners = new ArrayList&lt;&gt;(eventListeners.getOrDefault(eventName, new ArrayList&lt;&gt;()));</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        for (int i = 0; i &lt; listeners.size(); i++) {</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">            if (listeners.get(i) == listener) {</span>
+<span class="fc" id="L48">                listeners.remove(i);</span>
+<span class="fc" id="L49">                break;</span>
+            }
+        }
+
+<span class="fc" id="L53">        eventListeners.put(eventName, listeners);</span>
+<span class="fc" id="L54">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

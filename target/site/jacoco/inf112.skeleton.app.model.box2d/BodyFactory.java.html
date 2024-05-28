@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BodyFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model.box2d</a> &gt; <span class="el_source">BodyFactory.java</span></div><h1>BodyFactory.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model.box2d;
+
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.*;
+
+/**
+ * This class is responsible for creating physical bodies and sensor bodies within a Box2D world.
+ * It provides static factory methods to create bodies with predefined properties.
+ */
+<span class="nc" id="L10">public class BodyFactory {</span>
+
+    /**
+     * Creates and returns a physical Body in the Box2D world with specified dimensions, position, and type.
+     * The created body has fixed rotation and no restitution.
+     * The created body is a rectangle
+     *
+     * @param width The width of the body.
+     * @param height The height of the body.
+     * @param pos The initial position of the body's top left corner in the world.
+     * @param bodyType The type of the body (dynamic, static, or kinematic).
+     * @return The created Body instance with a box shape.
+     */
+    public static Body createPhysicalBodyRectangle(float width, float height, Vector2 pos, BodyDef.BodyType bodyType){
+<span class="fc" id="L24">        Body body = createBodyFromDef(width, height, pos, bodyType);</span>
+
+<span class="fc" id="L26">        PolygonShape shape = new PolygonShape();</span>
+<span class="fc" id="L27">        shape.setAsBox(width/2, height/2);</span>
+
+<span class="fc" id="L29">        FixtureDef fixtureDef = new FixtureDef();</span>
+<span class="fc" id="L30">        fixtureDef.shape = shape;</span>
+<span class="fc" id="L31">        fixtureDef.restitution = 0;</span>
+
+<span class="fc" id="L33">        body.createFixture(fixtureDef);</span>
+<span class="fc" id="L34">        shape.dispose();</span>
+        
+
+<span class="fc" id="L37">        return body;</span>
+    }
+
+    /**
+     * Creates and returns a physical Body in the Box2D world with specified dimensions, position, and type.
+     * The created body has fixed rotation and no restitution.
+     * The created body is a circle
+     *
+     * @param width The width of the body.
+     * @param height The height of the body.
+     * @param pos The initial position of the body's center in the world.
+     * @param bodyType The type of the body (dynamic, static, or kinematic).
+     * @return The created Body instance with a box shape.
+     */
+    public static Body createPhysicalBodyRound(float width, float height, Vector2 pos, BodyDef.BodyType bodyType){
+<span class="fc" id="L52">        Body body = createBodyFromDef(width, height, pos, bodyType);</span>
+
+<span class="fc" id="L54">        CircleShape shape = new CircleShape();</span>
+<span class="fc" id="L55">        shape.setRadius((width+height)/4);</span>
+
+<span class="fc" id="L57">        FixtureDef fixtureDef = new FixtureDef();</span>
+<span class="fc" id="L58">        fixtureDef.shape = shape;</span>
+<span class="fc" id="L59">        fixtureDef.restitution = 0;</span>
+
+<span class="fc" id="L61">        body.createFixture(fixtureDef);</span>
+<span class="fc" id="L62">        shape.dispose();</span>
+<span class="fc" id="L63">        return body;</span>
+    }
+
+    /**
+     * Creates and returns a sensor Body in the Box2D world with specified dimensions, position, and type.
+     * The created body has fixed rotation, no restitution, and the fixture is marked as a sensor.
+     *
+     * @param width The width of the body.
+     * @param height The height of the body.
+     * @param pos The initial position of the body's center in the world.
+     * @param bodyType The type of the body (dynamic, static, or kinematic).
+     * @return The created Body instance with a box shape, marked as a sensor.
+     */
+    public static Body createSensorBodyRectangle(float width, float height, Vector2 pos, BodyDef.BodyType bodyType){
+<span class="fc" id="L77">        Body body = createBodyFromDef(width, height, pos, bodyType);</span>
+
+<span class="fc" id="L79">        PolygonShape shape = new PolygonShape();</span>
+<span class="fc" id="L80">        shape.setAsBox(width/2, height/2);</span>
+
+<span class="fc" id="L82">        FixtureDef fixtureDef = new FixtureDef();</span>
+<span class="fc" id="L83">        fixtureDef.shape = shape;</span>
+<span class="fc" id="L84">        fixtureDef.restitution = 0;</span>
+<span class="fc" id="L85">        fixtureDef.isSensor = true;</span>
+
+
+<span class="fc" id="L88">        body.createFixture(fixtureDef);</span>
+<span class="fc" id="L89">        shape.dispose();</span>
+
+<span class="fc" id="L91">        return body;</span>
+    }
+
+
+    /**
+     * Creates and returns a sensor Body in the Box2D world with specified dimensions, position, and type.
+     * The created body has fixed rotation, no restitution, and the fixture is marked as a sensor.
+     *
+     * @param width The width of the body.
+     * @param height The height of the body.
+     * @param pos The initial position of the body's center in the world.
+     * @param bodyType The type of the body (dynamic, static, or kinematic).
+     * @return The created Body instance with a box shape, marked as a sensor.
+     */
+    public static Body createSensorBodyRound(float width, float height, Vector2 pos, BodyDef.BodyType bodyType){
+<span class="fc" id="L106">        Body body = createBodyFromDef(width, height, pos, bodyType);</span>
+
+<span class="fc" id="L108">        CircleShape shape = new CircleShape();</span>
+<span class="fc" id="L109">        shape.setRadius((width+height)/4);</span>
+
+<span class="fc" id="L111">        FixtureDef fixtureDef = new FixtureDef();</span>
+<span class="fc" id="L112">        fixtureDef.shape = shape;</span>
+<span class="fc" id="L113">        fixtureDef.restitution = 0;</span>
+<span class="fc" id="L114">        fixtureDef.isSensor = true;</span>
+
+<span class="fc" id="L116">        body.createFixture(fixtureDef);</span>
+<span class="fc" id="L117">        shape.dispose();</span>
+
+<span class="fc" id="L119">        return body;</span>
+    }
+
+    private static Body createBodyFromDef(float width, float height, Vector2 pos, BodyDef.BodyType bodyType) {
+<span class="fc" id="L123">        BodyDef bodyDef = new BodyDef();</span>
+<span class="fc" id="L124">        bodyDef.position.set(pos.x + width/2, pos.y + height/2);</span>
+<span class="fc" id="L125">        bodyDef.angle = 0;</span>
+<span class="fc" id="L126">        bodyDef.fixedRotation = true;</span>
+<span class="fc" id="L127">        bodyDef.type = bodyType;</span>
+
+<span class="fc" id="L129">        return Box2DWorldStatic.world.createBody(bodyDef);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

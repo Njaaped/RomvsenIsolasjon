@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GameScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.view.screens</a> &gt; <span class="el_source">GameScreen.java</span></div><h1>GameScreen.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.view.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import inf112.skeleton.app.model.GameModel;
+import inf112.skeleton.app.model.box2d.Box2DWorldStatic;
+import inf112.skeleton.app.model.entity.Entity;
+import inf112.skeleton.app.model.entity.weapon.Bullet;
+import inf112.skeleton.app.model.gamestate.GameState;
+import inf112.skeleton.app.model.mapfactories.Map;
+import inf112.skeleton.app.model.mapfactories.Tile;
+import inf112.skeleton.app.model.mapfactories.TileType;
+import inf112.skeleton.app.view.Media;
+import inf112.skeleton.app.view.ViewableModel;
+import inf112.skeleton.app.view.ui.game_ui.UiRenderer;
+import inf112.skeleton.app.view.ui.game_ui.healthbar.HealthDisplayDrawer;
+import inf112.skeleton.app.view.ui.game_ui.minimap.MinimapDrawer;
+import inf112.skeleton.app.view.ui.game_ui.score.ScoreDisplayDrawer;
+import org.lwjgl.opengl.GL20;
+
+public class GameScreen implements Screen {
+    private final ViewableModel model;
+    private final SpriteBatch batch;
+    private final OrthographicCamera camera;
+    private final Rectangle screenRectangle;
+
+    private ShapeRenderer shapeRenderer;
+
+    private MinimapDrawer minimapDrawer;
+    private HealthDisplayDrawer healthDisplayDrawer;
+    private ScoreDisplayDrawer scoreDisplayDrawer;
+    private final Map map;
+
+    private float transitionAlpha;
+    private UiRenderer uiRenderer;
+
+
+    public GameScreen(ViewableModel model) {
+<span class="nc" id="L45">        this(model, new SpriteBatch());</span>
+<span class="nc" id="L46">    }</span>
+
+    public GameScreen(ViewableModel model, SpriteBatch batch) {
+<span class="nc" id="L49">        this(model, batch, new ShapeRenderer());</span>
+<span class="nc" id="L50">    }</span>
+
+    public GameScreen(ViewableModel model, SpriteBatch batch, ShapeRenderer shapeRenderer) {
+<span class="nc" id="L53">        this(model, batch, shapeRenderer, new OrthographicCamera());</span>
+<span class="nc" id="L54">    }</span>
+
+    public GameScreen(ViewableModel model, SpriteBatch batch, ShapeRenderer shapeRenderer, OrthographicCamera camera) {
+<span class="fc" id="L57">        this(model, batch, shapeRenderer, camera, new Rectangle());</span>
+<span class="fc" id="L58">    }</span>
+
+<span class="fc" id="L60">    public GameScreen(ViewableModel model,</span>
+                      SpriteBatch batch,
+                      ShapeRenderer shapeRenderer,
+                      OrthographicCamera camera,
+                      Rectangle screenRectangle) {
+<span class="fc" id="L65">        this.model = model;</span>
+<span class="fc" id="L66">        this.batch = batch;</span>
+<span class="fc" id="L67">        this.camera = camera;</span>
+<span class="fc" id="L68">        this.screenRectangle = screenRectangle;</span>
+<span class="fc" id="L69">        this.shapeRenderer = shapeRenderer;</span>
+<span class="fc" id="L70">        this.map = model.getMap();</span>
+<span class="fc" id="L71">        initComponents();</span>
+<span class="fc" id="L72">    }</span>
+
+    private void initComponents() {
+<span class="fc" id="L75">        this.minimapDrawer = new MinimapDrawer(model.getMap());</span>
+<span class="fc" id="L76">        this.healthDisplayDrawer = new HealthDisplayDrawer(2.5f, 0.6f);</span>
+<span class="fc" id="L77">        this.scoreDisplayDrawer = new ScoreDisplayDrawer(&quot;fonts/ole_font/&quot;);</span>
+<span class="fc" id="L78">        this.uiRenderer = new UiRenderer(scoreDisplayDrawer, minimapDrawer, healthDisplayDrawer);</span>
+
+<span class="fc" id="L80">        setCameraZoom(1.5f);</span>
+<span class="fc" id="L81">        this.transitionAlpha = 1f;</span>
+<span class="fc" id="L82">    }</span>
+
+    private void setCameraZoom(float zoom) {
+<span class="fc" id="L85">        this.camera.zoom = zoom;</span>
+<span class="fc" id="L86">    }</span>
+
+    private void setCameraPosition(Vector2 position, float zoom) {
+<span class="fc" id="L89">        this.camera.position.set(position, zoom);</span>
+<span class="fc" id="L90">    }</span>
+
+    @Override
+    public void show() {
+
+<span class="fc" id="L95">    }</span>
+
+    @Override
+    public void render(float delta) {
+<span class="nc" id="L99">        render(delta, Box2DWorldStatic.getEntities());</span>
+<span class="nc" id="L100">    }</span>
+
+    public void render(float delta, Array&lt;Entity&gt; entities) {
+<span class="fc" id="L103">        clearScreen();</span>
+
+<span class="fc" id="L105">        prepareCamera();</span>
+
+<span class="fc" id="L107">        int px = (int) model.getPlayerPosition().x;</span>
+<span class="fc" id="L108">        int py = (int) model.getPlayerPosition().y;</span>
+
+<span class="fc" id="L110">        drawTiles(px, py);</span>
+<span class="fc" id="L111">        drawEntities(entities, px, py);</span>
+
+<span class="fc" id="L113">        this.uiRenderer.drawUi(batch, camera, (GameModel) model);</span>
+
+<span class="fc" id="L115">        batch.end();</span>
+
+<span class="fc" id="L117">        handleGameFlow();</span>
+<span class="fc" id="L118">    }</span>
+
+    private void drawTiles(int px, int py) {
+
+        // render only 10 closest tiles to the player
+<span class="fc bfc" id="L123" title="All 2 branches covered.">        for (int row = py - 10; row &lt; py + 10; row++) {</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">            for (int col = px - 10; col &lt; px + 10; col++) {</span>
+<span class="pc bpc" id="L125" title="2 of 8 branches missed.">                if (row &lt; 0 || col &lt; 0 || row &gt;= map.getHeight() || col &gt;= map.getWidth()) {</span>
+<span class="nc" id="L126">                    continue;</span>
+                }
+<span class="fc" id="L128">                Tile tile = map.getTile(row, col);</span>
+<span class="fc" id="L129">                Vector2 tilePosition = map.convertToWorldPosition(row, col);</span>
+<span class="fc" id="L130">                int tileSize = map.getTileSize();</span>
+<span class="fc" id="L131">                batch.draw(tile.getSecondaryTexture(), tilePosition.x, tilePosition.y, tileSize, tileSize);</span>
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">                if (tile.getPrimaryTexture() != null) {</span>
+<span class="fc" id="L133">                    batch.draw(tile.getPrimaryTexture(), tilePosition.x, tilePosition.y, tileSize, tileSize);</span>
+                }
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">                if (tile.getTiletype() == TileType.PLAYER_SPAWN) {</span>
+<span class="nc" id="L136">                    batch.draw(Media.green, tilePosition.x, tilePosition.y, tileSize, tileSize);</span>
+                }
+            }
+        }
+<span class="fc" id="L140">    }</span>
+
+    private void drawEntities(Array&lt;Entity&gt; entities, int px, int py) {
+<span class="pc" id="L143">        entities.sort((o1, o2) -&gt; (int) Math.signum(o2.getPosition().y - o1.getPosition().y));</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        for (Entity entity : entities) {</span>
+<span class="fc" id="L145">            Vector2 entityPosition = entity.getPosition();</span>
+<span class="pc bpc" id="L146" title="4 of 8 branches missed.">            if (entityPosition.x &lt; px - 10 || entityPosition.x &gt; px + 10 || entityPosition.y &lt; py - 10 || entityPosition.y &gt; py + 10) {</span>
+<span class="nc" id="L147">                continue;</span>
+            }
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">            if (!(entity instanceof Bullet)) {</span>
+<span class="fc" id="L150">                batch.draw(entity.getPrimaryTexture(), entity.getPosition().x - entity.getWidth() / 2, entity.getPosition().y - entity.getHeight() / 2, entity.getWidth(), entity.getHeight());</span>
+<span class="fc" id="L151">            } else {</span>
+<span class="nc" id="L152">                batch.draw(</span>
+<span class="nc" id="L153">                    entity.getPrimaryTexture(),</span>
+<span class="nc" id="L154">                    entity.getPosition().x - Bullet.WIDTH / 2f, entity.getPosition().y - Bullet.HEIGHT / 2f, // Texture position</span>
+<span class="nc" id="L155">                    Bullet.WIDTH / 2f, Bullet.HEIGHT / 2f, // Origin point (center of the texture)</span>
+<span class="nc" id="L156">                    Bullet.WIDTH, Bullet.HEIGHT, // Width and height of the texture</span>
+<span class="nc" id="L157">                    1f, 1f, // Scale on x and y (no scaling)</span>
+<span class="nc" id="L158">                    (Bullet.getDirection(entity) - 90) % 360, // Rotation angle in degrees</span>
+<span class="nc" id="L159">                    0, 0, // Starting point of the texture in the Texture (useful for TextureRegion)</span>
+<span class="nc" id="L160">                    entity.getPrimaryTexture().getWidth(), entity.getPrimaryTexture().getHeight(), // The width and height of the area from the Texture to draw</span>
+<span class="nc" id="L161">                    false, false // Whether to flip the sprite horizontally or vertically</span>
+                );
+            }
+        }
+<span class="fc" id="L165">    }</span>
+
+    private void clearScreen(){
+<span class="fc" id="L168">        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+<span class="fc" id="L169">        Gdx.gl.glClearColor(0, 0, 0, 1);</span>
+<span class="fc" id="L170">    }</span>
+
+    private void prepareCamera() {
+<span class="fc" id="L173">        setCameraPosition(model.getPlayerPosition(), .4f);</span>
+<span class="fc" id="L174">        camera.update();</span>
+<span class="fc" id="L175">        batch.setProjectionMatrix(camera.combined);</span>
+<span class="fc" id="L176">        batch.begin();</span>
+<span class="fc" id="L177">    }</span>
+
+
+    private void handleGameFlow() {
+<span class="fc" id="L181">        transitionAndPauseLogic();</span>
+<span class="fc" id="L182">        checkGameOver();</span>
+<span class="fc" id="L183">        model.drawHitboxes(camera);</span>
+<span class="fc" id="L184">    }</span>
+
+
+    /**
+     * get the camera
+     */
+    public OrthographicCamera getCamera() {
+<span class="fc" id="L191">        return camera;</span>
+    }
+
+
+    @Override
+    public void resize(int width, int height) {
+<span class="fc" id="L197">        screenRectangle.width = width;</span>
+<span class="fc" id="L198">		    screenRectangle.height = height;</span>
+<span class="fc" id="L199">        float ratio = (0f + Gdx.graphics.getWidth()) / Gdx.graphics.getHeight();</span>
+
+<span class="fc" id="L201">        camera.viewportWidth = ratio * 5;</span>
+<span class="fc" id="L202">        camera.viewportHeight = 5;</span>
+
+<span class="fc" id="L204">    }</span>
+
+    @Override
+    public void pause() {
+<span class="fc" id="L208">    }</span>
+
+    @Override
+    public void resume() {
+<span class="fc" id="L212">    }</span>
+
+    @Override
+    public void hide() {
+        // Does nothing
+<span class="fc" id="L217">    }</span>
+
+    @Override
+    public void dispose() {
+<span class="fc" id="L221">        batch.dispose();</span>
+<span class="fc" id="L222">    }</span>
+
+    /**
+     * This method is used to create a transition effect between screens.
+     * Also checks if the game is paused and renders the pause menu if it is.
+     */
+
+    private void transitionAndPauseLogic() {
+<span class="pc bpc" id="L230" title="1 of 2 branches missed.">        if (transitionAlpha &gt; 0f) {</span>
+<span class="fc" id="L231">            transitionAlpha = ScreenManager.transitionEffect1(transitionAlpha, 1, 0, 1, shapeRenderer);</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">            if (transitionAlpha &lt; 0.01f) {</span>
+<span class="nc" id="L233">                GameModel.state = GameState.RUNNING;</span>
+            }
+<span class="nc" id="L235">        } else {</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">            if (GameModel.state == GameState.PAUSED) {</span>
+<span class="nc" id="L237">                ScreenManager.pauseMenu(shapeRenderer);</span>
+            }
+        }
+<span class="fc" id="L240">    }</span>
+
+    /**
+     * This method checks if the game is over and shows the game over screen if it is.
+     */
+
+    private void checkGameOver() {
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">        if (GameModel.state == GameState.GAME_OVER) {</span>
+<span class="nc" id="L248">            ScreenManager.getInstance().showGameOverScreen();</span>
+        }
+<span class="fc" id="L250">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

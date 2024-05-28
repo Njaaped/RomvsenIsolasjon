@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LevelManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model.gamestate</a> &gt; <span class="el_source">LevelManager.java</span></div><h1>LevelManager.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model.gamestate;
+
+import inf112.skeleton.app.model.entity.Entity;
+import inf112.skeleton.app.model.entity.alien.Alien;
+import inf112.skeleton.app.model.box2d.Box2DWorldStatic;
+import inf112.skeleton.app.model.mapfactories.Map;
+
+
+public class LevelManager {
+    private int currentLevel;
+    private int mapWidth;
+    private int mapHeight;
+    private int difficulty;
+
+    private static final int INITIAL_MAP_SIZE = 30;
+    private static final int MAP_SIZE_INCREMENT = 5;
+    private static final int INITIAL_DIFFICULTY = 1;
+
+    public static boolean drawPath;
+
+    /**
+     * Constructor for LevelManager
+     * Initializes the current level to 1, the map size to 30x30, and the difficulty to 1
+     */
+
+<span class="fc" id="L26">    public LevelManager() {</span>
+<span class="fc" id="L27">        this.currentLevel = 1;</span>
+<span class="fc" id="L28">        this.mapWidth = INITIAL_MAP_SIZE;</span>
+<span class="fc" id="L29">        this.mapHeight = INITIAL_MAP_SIZE;</span>
+<span class="fc" id="L30">        this.difficulty = INITIAL_DIFFICULTY;</span>
+<span class="fc" id="L31">        LevelManager.drawPath = false;</span>
+<span class="fc" id="L32">    }</span>
+
+    /**
+     * Method to increase the level, map size, and difficulty
+     */
+
+    public void nextLevel() {
+<span class="fc" id="L39">        currentLevel++;</span>
+<span class="fc" id="L40">        mapWidth += MAP_SIZE_INCREMENT;</span>
+<span class="fc" id="L41">        mapHeight += MAP_SIZE_INCREMENT;</span>
+<span class="fc" id="L42">        difficulty++; </span>
+<span class="fc" id="L43">    }</span>
+
+    /**
+     * Method to get the current level
+     * @return currentLevel
+     */
+
+    public int getCurrentLevel() {
+<span class="fc" id="L51">        return currentLevel;</span>
+    }
+
+    /**
+     * Method to get the map width
+     * @return mapWidth
+     */
+
+    public int getMapWidth() {
+<span class="fc" id="L60">        return mapWidth;</span>
+    }
+
+    /**
+     * Method to get the map height
+     * @return mapHeight
+     */
+
+    public int getMapHeight() {
+<span class="fc" id="L69">        return mapHeight;</span>
+    }
+
+    /**
+     * Method to get the difficulty
+     * @return difficulty
+     */
+
+    public int getDifficulty() {
+<span class="fc" id="L78">        return difficulty;</span>
+    }
+
+    /**
+     * Method to check is ready to level up
+     * @return true if level up, false otherwise
+     */
+
+    public static boolean isLevelUp(Entity playerPos, Map map, int spawnX, int spawnY) {
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if (isEntityMapEmpty()) {</span>
+<span class="pc bpc" id="L88" title="3 of 8 branches missed.">            if (playerPos.getPosition().x &gt; spawnX &amp;&amp; playerPos.getPosition().y &gt; spawnY &amp;&amp; playerPos.getPosition().x &lt; spawnX + 1 &amp;&amp; playerPos.getPosition().y &lt; spawnY + 1) {</span>
+<span class="fc" id="L89">                LevelManager.drawPath = false;</span>
+<span class="fc" id="L90">                return true;</span>
+            } 
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            if (!LevelManager.drawPath) {</span>
+<span class="fc" id="L93">                map.drawPath(playerPos.getPosition());</span>
+<span class="fc" id="L94">                LevelManager.drawPath = true;</span>
+            }
+        }
+<span class="fc" id="L97">        return false;</span>
+    }
+
+    /**
+     * checks if EntityMap is empty
+     */
+    private static boolean isEntityMapEmpty() {
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        for (Entity entity : Box2DWorldStatic.entityMap.values()) {</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            if (entity instanceof Alien) {</span>
+<span class="fc" id="L106">                return false;</span>
+            }
+<span class="fc" id="L108">        }</span>
+<span class="fc" id="L109">        return true;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

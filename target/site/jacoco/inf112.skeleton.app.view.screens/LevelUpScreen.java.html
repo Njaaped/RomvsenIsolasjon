@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LevelUpScreen.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.view.screens</a> &gt; <span class="el_source">LevelUpScreen.java</span></div><h1>LevelUpScreen.java</h1><pre class="source lang-java linenums">
+package inf112.skeleton.app.view.screens;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import inf112.skeleton.app.view.ui.game_ui.level.LevelUpDrawer;
+import org.lwjgl.opengl.GL20;
+
+public class LevelUpScreen implements Screen {
+    private final SpriteBatch batch;
+    private final OrthographicCamera camera;
+    private float transitionAlpha;
+    private final ShapeRenderer shapeRenderer;
+    private final int level;
+
+    private final LevelUpDrawer levelUpDrawer;
+
+    public LevelUpScreen(int level) {
+<span class="nc" id="L22">        this(level, new ShapeRenderer(), new SpriteBatch(), new OrthographicCamera()) ;</span>
+<span class="nc" id="L23">    }</span>
+
+    public LevelUpScreen(int level,
+                         ShapeRenderer shapeRenderer,
+                         SpriteBatch spriteBatch,
+<span class="fc" id="L28">                         OrthographicCamera camera) {</span>
+<span class="fc" id="L29">        this.shapeRenderer = shapeRenderer;</span>
+<span class="fc" id="L30">        this.batch = spriteBatch;</span>
+<span class="fc" id="L31">        this.camera = camera;</span>
+<span class="fc" id="L32">        this.camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());</span>
+<span class="fc" id="L33">        this.level = level;</span>
+<span class="fc" id="L34">        transitionAlpha = 0.001f;</span>
+<span class="fc" id="L35">        levelUpDrawer = new LevelUpDrawer();</span>
+<span class="fc" id="L36">    }</span>
+
+    @Override
+    public void show() {
+
+<span class="fc" id="L41">    }</span>
+
+    @Override
+    public void render(float delta) {
+<span class="fc" id="L45">        clearScreen();</span>
+
+<span class="fc" id="L47">        prepareCamera();</span>
+
+<span class="fc" id="L49">        levelUpDrawer.draw(batch, camera, level);</span>
+
+<span class="fc" id="L51">        batch.end();</span>
+
+<span class="fc" id="L53">        transitionAlpha = ScreenManager.transitionEffect1(transitionAlpha, 0f, 1f, 0.75f, shapeRenderer);</span>
+
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        if (transitionAlpha &gt; 0.95f) {</span>
+<span class="nc" id="L56">            ScreenManager.getInstance().showGameScreen();</span>
+        }
+<span class="fc" id="L58">    }</span>
+
+    private void clearScreen(){
+<span class="fc" id="L61">        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);</span>
+<span class="fc" id="L62">        Gdx.gl.glClearColor(0, 0, 0, 1);</span>
+<span class="fc" id="L63">    }</span>
+
+    private void prepareCamera() {
+<span class="fc" id="L66">        camera.update();</span>
+<span class="fc" id="L67">        batch.setProjectionMatrix(camera.combined);</span>
+<span class="fc" id="L68">        batch.begin();</span>
+<span class="fc" id="L69">    }</span>
+
+    @Override
+    public void resize(int width, int height) {
+<span class="fc" id="L73">        camera.setToOrtho(false, width, height);</span>
+<span class="fc" id="L74">    }</span>
+
+    @Override
+    public void pause() {
+<span class="fc" id="L78">    }</span>
+
+    @Override
+    public void resume() {
+<span class="fc" id="L82">    }</span>
+
+    @Override
+    public void hide() {
+<span class="fc" id="L86">    }</span>
+
+    @Override
+    public void dispose() {
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        if (batch != null) {</span>
+<span class="fc" id="L91">            batch.dispose();</span>
+        }
+<span class="fc" id="L93">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

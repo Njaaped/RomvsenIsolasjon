@@ -1,0 +1,67 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+Romvsen: Isolasjon,inf112.skeleton.app.factory,Factory,2,36,1,1,1,11,1,5,0,5
+Romvsen: Isolasjon,inf112.skeleton.app.model.audio,SoundEffectEvent,3,60,0,10,1,14,1,7,1,2
+Romvsen: Isolasjon,inf112.skeleton.app.model.audio,MusicHandler,41,16,6,0,13,5,5,1,2,1
+Romvsen: Isolasjon,inf112.skeleton.app.model.audio,SoundEffectHandler,24,11,6,0,5,4,4,1,1,1
+Romvsen: Isolasjon,inf112.skeleton.app.model.audio,MusicEvent,0,36,0,8,0,11,0,6,0,2
+Romvsen: Isolasjon,inf112.skeleton.app.view.ui.game_ui.minimap,MinimapDrawer,142,291,15,26,15,41,16,10,1,3
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.weapon,Bullet,10,157,5,17,4,37,5,14,0,8
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.weapon,BaseWeapon,0,40,0,4,0,14,0,5,0,3
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.weapon,Strike,0,122,2,6,0,29,2,8,0,6
+Romvsen: Isolasjon,inf112.skeleton.app.model,GameModel,85,368,10,24,21,79,12,26,5,15
+Romvsen: Isolasjon,inf112.skeleton.app.model.score,ScoreManager,18,23,2,0,5,8,3,3,2,3
+Romvsen: Isolasjon,inf112.skeleton.app.model.score,ScoreEvent,3,7,0,0,1,3,1,1,1,1
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity,DeferredEntityFactory,25,115,0,2,3,25,3,9,3,8
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity,Entity,12,129,2,16,5,42,5,21,3,14
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity,DeferredEntityFactory.new EventListener() {...},0,34,0,0,0,4,0,2,0,2
+Romvsen: Isolasjon,inf112.skeleton.app.event,EventEmitter,2,98,2,8,0,24,2,8,0,5
+Romvsen: Isolasjon,inf112.skeleton.app.event,GlobalEventBus,3,25,0,4,1,5,1,3,1,1
+Romvsen: Isolasjon,inf112.skeleton.app.event,Event,3,6,0,0,1,3,1,1,1,1
+Romvsen: Isolasjon,inf112.skeleton.app.model.box2d,Box2DWorldStatic.new ContactListener() {...},0,27,0,0,0,11,0,5,0,5
+Romvsen: Isolasjon,inf112.skeleton.app.model.box2d,Box2DWorldStatic,18,253,7,19,7,60,8,18,2,11
+Romvsen: Isolasjon,inf112.skeleton.app.model.box2d,BodyFactory,3,181,0,0,1,44,1,5,1,5
+Romvsen: Isolasjon,inf112.skeleton.app.controller,AppController,6,0,0,0,3,0,2,0,2,0
+Romvsen: Isolasjon,inf112.skeleton.app.controller,GameLoop,7,53,1,1,4,15,2,3,1,3
+Romvsen: Isolasjon,inf112.skeleton.app.controller,GameController,54,142,22,26,11,30,18,20,2,5
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.powerup,LootDropper,55,32,4,0,10,5,4,1,2,1
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.powerup,PowerUp,10,79,1,5,3,18,3,6,2,4
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.powerup,LootDropper.new EventListener() {...},17,6,2,0,4,1,2,1,1,1
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.player,Player,13,204,5,17,7,58,6,21,1,15
+Romvsen: Isolasjon,inf112.skeleton.app,RomvsenIsolasjon,36,0,0,0,10,0,3,0,3,0
+Romvsen: Isolasjon,inf112.skeleton.app,Main,23,0,0,0,6,0,2,0,2,0
+Romvsen: Isolasjon,inf112.skeleton.app.model.gamestate,GameState,0,27,0,0,0,5,0,1,0,1
+Romvsen: Isolasjon,inf112.skeleton.app.model.gamestate,LevelManager,0,121,4,12,0,29,4,12,0,8
+Romvsen: Isolasjon,inf112.skeleton.app.view.screens,StartScreen,104,311,4,4,20,61,7,17,4,16
+Romvsen: Isolasjon,inf112.skeleton.app.view.screens,GameOverScreen,59,329,8,7,8,58,6,14,1,11
+Romvsen: Isolasjon,inf112.skeleton.app.view.screens,LevelUpScreen,15,108,2,2,3,32,3,10,1,10
+Romvsen: Isolasjon,inf112.skeleton.app.view.screens,GameScreen,101,398,14,22,26,82,18,25,5,20
+Romvsen: Isolasjon,inf112.skeleton.app.view.screens,ScreenManager,172,77,11,7,51,17,17,5,10,3
+Romvsen: Isolasjon,inf112.skeleton.app.model.mapfactories,MapEntry,0,12,0,0,0,1,0,1,0,1
+Romvsen: Isolasjon,inf112.skeleton.app.model.mapfactories,InsaneMapFactory,0,281,1,13,0,58,1,15,0,9
+Romvsen: Isolasjon,inf112.skeleton.app.model.mapfactories,DefaultTileBodyCreator,8,33,1,4,2,11,1,4,0,2
+Romvsen: Isolasjon,inf112.skeleton.app.model.mapfactories,Map,73,258,6,24,9,43,5,23,1,12
+Romvsen: Isolasjon,inf112.skeleton.app.model.mapfactories,TileType,0,45,0,0,0,8,0,1,0,1
+Romvsen: Isolasjon,inf112.skeleton.app.model.mapfactories,Tile,11,255,3,51,5,33,5,33,2,9
+Romvsen: Isolasjon,inf112.skeleton.app.view.ui.game_ui.healthbar,HealthDisplayDrawer,5,92,2,2,2,14,2,2,0,2
+Romvsen: Isolasjon,inf112.skeleton.app.view.ui.game_ui.score,ScoreDisplayDrawer,23,111,2,4,4,15,2,4,1,2
+Romvsen: Isolasjon,inf112.skeleton.app.view,Media,140,646,0,36,70,110,2,41,2,6
+Romvsen: Isolasjon,inf112.skeleton.app.view.ui.buttons,GameButton,7,70,1,1,3,19,2,7,1,7
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.alien,AlienBomber,8,87,5,7,2,31,5,5,0,4
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.alien,AlienOne,0,46,1,3,0,16,1,4,0,3
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.alien,Alien.new RayCastCallback() {...},0,25,0,2,0,6,0,3,0,2
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.alien,AlienTwo,0,57,1,5,0,20,1,5,0,3
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.alien,Alien,137,188,17,7,32,47,10,13,1,10
+Romvsen: Isolasjon,inf112.skeleton.app.model.mapfactories.maputils,CreateMap,4,1341,19,189,0,165,19,103,0,18
+Romvsen: Isolasjon,inf112.skeleton.app.model.mapfactories.maputils,AStar.Node,2,49,1,7,1,11,1,8,0,5
+Romvsen: Isolasjon,inf112.skeleton.app.model.mapfactories.maputils,IntegerToTile,4,47,1,20,2,23,2,20,1,3
+Romvsen: Isolasjon,inf112.skeleton.app.model.mapfactories.maputils,AStar,24,610,12,58,8,97,13,34,1,11
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.health,Health,12,34,4,2,5,9,4,3,1,3
+Romvsen: Isolasjon,inf112.skeleton.app.view.ui.game_ui,UiRenderer,0,37,0,0,0,9,0,2,0,2
+Romvsen: Isolasjon,inf112.skeleton.app.view.ui.game_ui.level,LevelUpDrawer,23,133,2,4,4,18,2,4,1,2
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.powerup.effects,GodModeEffect,12,47,1,1,5,12,2,3,1,3
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.powerup.effects,RayGunEffect,13,30,1,1,3,8,2,3,1,3
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.powerup.effects,HealthEffect,1,16,0,0,1,7,1,3,1,3
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.weapon.weapons,Hand,0,68,0,0,0,11,0,2,0,2
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.weapon.weapons,RayGun,0,57,0,0,0,10,0,2,0,2
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.weapon.weapons,AlienGun,0,57,0,0,0,10,0,2,0,2
+Romvsen: Isolasjon,inf112.skeleton.app.model.entity.weapon.weapons,Gun,0,62,0,0,0,10,0,2,0,2

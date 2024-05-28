@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="nb"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AlienTwo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Romvsen: Isolasjon</a> &gt; <a href="index.source.html" class="el_package">inf112.skeleton.app.model.entity.alien</a> &gt; <span class="el_source">AlienTwo.java</span></div><h1>AlienTwo.java</h1><pre class="source lang-java linenums">package inf112.skeleton.app.model.entity.alien;
+
+import com.badlogic.gdx.math.Vector2;
+
+import inf112.skeleton.app.model.entity.Interactable;
+import inf112.skeleton.app.model.entity.player.Player;
+import inf112.skeleton.app.model.entity.weapon.Cooldown;
+import inf112.skeleton.app.model.entity.weapon.Weapon;
+import inf112.skeleton.app.model.entity.weapon.weapons.AlienGun;
+import inf112.skeleton.app.model.box2d.Box2DWorldStatic;
+import inf112.skeleton.app.view.Media;
+
+public class AlienTwo extends Alien {
+  private static final double DEFAULT_SPEED = 1;
+  private static final float WIDTH = 1f;
+  private static final float HEIGHT = 1f;
+  private static final int POINT_VALUE = 20;
+  private Weapon weapon;
+
+  public AlienTwo(Vector2 pos) {
+<span class="fc" id="L21">    super(</span>
+<span class="fc" id="L22">      pos,</span>
+<span class="fc" id="L23">      WIDTH,</span>
+<span class="fc" id="L24">      HEIGHT,</span>
+<span class="fc" id="L25">      DEFAULT_SPEED,</span>
+<span class="fc" id="L26">      POINT_VALUE,</span>
+<span class="fc" id="L27">      Media.alienTwo</span>
+    );
+<span class="fc" id="L29">    this.weapon = new AlienGun(this.physicalBody, this.getClass());</span>
+<span class="fc" id="L30">  }</span>
+
+  @Override
+  public void updateBehavior(float deltaTime) {
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">    if (weapon instanceof Cooldown cooldownWeapon) {</span>
+<span class="fc" id="L35">      cooldownWeapon.reduceCooldown();</span>
+    }
+<span class="fc" id="L37">    Player player = (Player) Box2DWorldStatic.getPlayer();</span>
+<span class="fc" id="L38">    double dist = distanceTo(player);</span>
+<span class="fc" id="L39">    boolean isInSight = false;</span>
+<span class="fc bfc" id="L40" title="All 2 branches covered.">    if (dist &lt; 15d) {</span>
+<span class="fc" id="L41">      isInSight = canSee(player);</span>
+    }
+<span class="fc bfc" id="L43" title="All 2 branches covered.">    if (isInSight) {</span>
+<span class="fc" id="L44">      this.weapon.attack(directionTo(player).nor());</span>
+    }
+<span class="fc" id="L46">  }</span>
+
+  @Override
+  protected void interactBehavior(Interactable target, boolean isStart) {
+    
+<span class="fc" id="L51">  }</span>
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
